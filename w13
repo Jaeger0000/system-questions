@@ -1,0 +1,78 @@
+[
+  { type: "mc", topic: "shell-scripting", q: "What is a shell script?", choices: ["A compiled program", "A text file containing commands that the shell interprets", "A graphical user interface", "A database query"], answer: 1, expl: "Shell scripts automate repetitive tasks by combining commands in one file" },
+  { type: "mc", topic: "shell-scripting", q: "Why use shell scripts?", choices: ["They are faster than compiled code", "Automate tasks, consistency, native Linux support, ease of writing", "They require no shell", "Only for advanced users"], answer: 1, expl: "Scripts save time, eliminate manual errors, and run the same way every time" },
+  { type: "command", topic: "shell-scripting", q: "Create a shell script file named hello.sh with a shebang line.", answer: ["#!/bin/bash"], expl: "Shebang line tells kernel which interpreter to use; must be first line" },
+  { type: "mc", topic: "shell-scripting", q: "What is the shebang line?", choices: ["A comment", "The first line telling the kernel which interpreter to use", "An error message", "A variable declaration"], answer: 1, expl: "#!/bin/bash is the standard shebang for Bash scripts" },
+  { type: "command", topic: "shell-scripting", q: "Make a shell script executable.", answer: ["chmod +x script.sh"], expl: "chmod +x sets execute permission; needed to run with ./script.sh" },
+
+  { type: "mc", topic: "shebang", q: "What does #!/bin/bash mean?", choices: ["Ignore this line", "Use /bin/bash as the interpreter", "Comment line", "Header information"], answer: 1, expl: "#! is shebang; path is interpreter location" },
+  { type: "mc", topic: "shebang", q: "What is the difference between #!/bin/bash and #!/bin/sh?", choices: ["No difference", "bash has more features; sh is POSIX compliant", "sh is for servers", "bash only works locally"], answer: 1, expl: "/bin/sh is maximum portability; /bin/bash is Linux standard" },
+  { type: "mc", topic: "shebang", q: "What is #!/usr/bin/env bash used for?", choices: ["Slower execution", "Find bash via PATH — works across different distros", "Database environment", "User environment"], answer: 1, expl: "env bash finds bash wherever it's installed; more portable" },
+  { type: "mc", topic: "shebang", q: "What three ways can you run a shell script?", choices: ["Only ./script.sh", "./script.sh, bash script.sh, source script.sh", "Only bash script.sh", "Only source script.sh"], answer: 1, expl: "./script.sh = subshell (executable + shebang); bash script.sh = subshell; source = current shell (variables persist)" },
+
+  { type: "mc", topic: "variables", q: "How do you assign a variable in Bash?", choices: ["name = \"Alice\"", "name=\"Alice\"", "set name Alice", "name: Alice"], answer: 1, expl: "No spaces around =; spaces cause shell to interpret name as command" },
+  { type: "command", topic: "variables", q: "Create a variable named username with value 'alice'.", answer: ["username=\"alice\""], expl: "Assignment with no spaces; use quotes for string values" },
+  { type: "mc", topic: "variables", q: "What is correct variable naming in Bash?", choices: ["starts_with_digit", "1variable", "snake_case_locals", "Uses spaces"], answer: 2, expl: "Names must start with letter/underscore; use lowercase for local vars" },
+  { type: "output", topic: "variables", q: "What does: echo $count output if count is not set?", answer: ["Empty line (nothing)"], expl: "Unset variables expand to empty string" },
+  { type: "command", topic: "variables", q: "Use a variable in an echo statement safely.", answer: ["echo \"$variable\""], expl: "Double quotes protect against word splitting" },
+
+  { type: "mc", topic: "quoting", q: "What is the difference between double and single quotes?", choices: ["No difference", "Double quotes expand variables; single quotes are literal", "Single faster", "Only single works"], answer: 1, expl: "\"$var\" expands; '$var' prints literally; always use double for variables" },
+  { type: "output", topic: "quoting", q: "What does: name='Alice'; echo '$name' output?", answer: ["$name"], expl: "Single quotes suppress all expansion" },
+  { type: "output", topic: "quoting", q: "What does: name=\"Alice\"; echo \"$name\" output?", answer: ["Alice"], expl: "Double quotes expand variables" },
+  { type: "mc", topic: "quoting", q: "Why always wrap variables in double quotes?", choices: ["For speed", "Protects against word splitting and globbing", "Required by syntax", "Makes code faster"], answer: 1, expl: "\"$file\" handles filenames with spaces safely" },
+
+  { type: "mc", topic: "command-substitution", q: "What does $(command) do?", choices: ["Execute command", "Capture command output into a variable", "Comment the command", "Escape the command"], answer: 1, expl: "$(cmd) runs cmd and substitutes its output; modern syntax vs legacy `cmd`" },
+  { type: "command", topic: "command-substitution", q: "Capture the current date and store in a variable.", answer: ["today=$(date +%Y-%m-%d)"], expl: "$(command) substitutes output into variable" },
+  { type: "output", topic: "command-substitution", q: "What does: echo \"User: $(whoami)\" output if user is 'alice'?", answer: ["User: alice"], expl: "Command substitution expands within double quotes" },
+  { type: "mc", topic: "command-substitution", q: "What is the legacy syntax for command substitution?", choices: ["${command}", "`command`", "[command]", "(command)"], answer: 1, expl: "Backticks still work but $(cmd) is modern and preferred" },
+
+  { type: "mc", topic: "special-variables", q: "What does $0 represent?", choices: ["Current directory", "First argument", "Script name or shell name", "Number of args"], answer: 2, expl: "$0 is script name; $1, $2 are arguments" },
+  { type: "mc", topic: "special-variables", q: "What does $# represent?", choices: ["Comment", "Number of arguments", "Last argument", "Previous command"], answer: 1, expl: "$# counts positional arguments passed to script" },
+  { type: "mc", topic: "special-variables", q: "What does \"$@\" do?", choices: ["All args as one", "All args quoted individually (★ use this)", "Current directory", "Last argument"], answer: 1, expl: "\"$@\" expands to \"$1\" \"$2\" ... preserving each arg as separate word" },
+  { type: "output", topic: "special-variables", q: "If script called: ./myscript.sh arg1 arg2, what does $# equal?", answer: ["2"], expl: "$# counts positional arguments (not the script name)" },
+  { type: "mc", topic: "special-variables", q: "What does $? represent?", choices: ["Question mark character", "Exit status of last command (0=success, 1+=failure)", "Current shell", "Process ID"], answer: 1, expl: "$? holds exit status; check with: if [ $? -eq 0 ]; then ..." },
+  { type: "mc", topic: "special-variables", q: "What does $$ represent?", choices: ["String concatenation", "PID of current shell process", "Previous command", "Escaped dollar"], answer: 1, expl: "$$  useful for creating unique temp file names" },
+
+  { type: "mc", topic: "parameter-expansion", q: "What does ${var:-default} do?", choices: ["Assign default", "Use default if var is empty or unset", "Set to default", "Remove default"], answer: 1, expl: "${var:-fallback} provides fallback when var is empty" },
+  { type: "output", topic: "parameter-expansion", q: "What does: name=''; echo \"${name:-guest}\" output?", answer: ["guest"], expl: "Default expansion when variable is empty" },
+  { type: "mc", topic: "parameter-expansion", q: "What does ${file%.gz} do?", choices: ["Add .gz", "Remove .gz suffix from end", "Check if file ends in .gz", "Count .gz"], answer: 1, expl: "% removes shortest match from end; %% removes longest" },
+  { type: "output", topic: "parameter-expansion", q: "What does: file='archive.tar.gz'; echo \"${file%.gz}\" output?", answer: ["archive.tar"], expl: "% removes .gz suffix" },
+  { type: "mc", topic: "parameter-expansion", q: "What does ${#var} do?", choices: ["Get value", "Get length of variable", "Delete variable", "Check if set"], answer: 1, expl: "${#var} returns string length" },
+  { type: "output", topic: "parameter-expansion", q: "What does: msg='hello'; echo ${#msg} output?", answer: ["5"], expl: "Length of 'hello' is 5 characters" },
+  { type: "command", topic: "parameter-expansion", q: "Replace all occurrences of a substring in a variable.", answer: ["${var//old/new}"], expl: "// replaces all; / replaces first only" },
+
+  { type: "mc", topic: "here-documents", q: "What is a here document?", choices: ["Documentation comment", "Multi-line input fed to command's stdin without temp file", "Temporary file", "Variable declaration"], answer: 1, expl: "Heredoc feeds text to command; cleaner than multiple echo statements" },
+  { type: "command", topic: "here-documents", q: "Write multiple lines to a file using a heredoc.", answer: ["cat > file.txt <<EOF\nline1\nline2\nEOF"], expl: "Heredoc syntax: cmd <<DELIMITER ... DELIMITER" },
+  { type: "mc", topic: "here-documents", q: "What must be true about the closing delimiter in a heredoc?", choices: ["Can be indented", "Must be alone on its line with no leading/trailing spaces", "Optional", "Must be lowercase"], answer: 1, expl: "Closing delimiter MUST be alone; even spaces break it" },
+  { type: "mc", topic: "here-documents", q: "Does a heredoc expand variables by default?", choices: ["No, never", "Yes, like double quotes", "Only special vars", "Only with -E flag"], answer: 1, expl: "By default heredoc expands $var and $(cmd); quote delimiter to disable" },
+  { type: "output", topic: "here-documents", q: "What does: user='alice'; cat <<EOF\nUser: $user\nEOF output?", answer: ["User: alice"], expl: "Heredoc expands variables like double quotes" },
+  { type: "command", topic: "here-documents", q: "Create a heredoc that does NOT expand variables.", answer: ["cat <<'EOF'\ntext with $var literal\nEOF"], expl: "Quote the delimiter: <<'EOF' instead of <<EOF to prevent expansion" },
+  { type: "output", topic: "here-documents", q: "What does: user='alice'; cat <<'EOF'\nUser: $user\nEOF output?", answer: ["User: $user"], expl: "Quoted delimiter disables expansion" },
+  { type: "mc", topic: "here-documents", q: "What does <<- do in a heredoc?", choices: ["Append to file", "Strip leading TABS for indentation", "Append lines", "Comment"], answer: 1, expl: "<<- allows indenting body with TABs; bash strips them (not spaces)" },
+
+  { type: "mc", topic: "here-strings", q: "What does <<< (here string) do?", choices: ["Heredoc", "Single-line input alternative to echo | command", "Append", "Syntax error"], answer: 1, expl: "<<< feeds string to stdin; shorter than echo ... | cmd" },
+  { type: "command", topic: "here-strings", q: "Convert 'hello' to uppercase using tr with a here string.", answer: ["tr a-z A-Z <<< 'hello'"], expl: "<<< feeds string directly to command stdin" },
+  { type: "output", topic: "here-strings", q: "What does: bc <<< '10 + 5' output?", answer: ["15"], expl: "Here string feeds expression to bc" },
+
+  { type: "mc", topic: "shell-functions", q: "How do you define a function?", choices: ["function name() { commands; }", "name() { commands; }", "Both forms work; name() {...} is recommended", "def name():"], answer: 2, expl: "Function name can be followed by () or use function keyword" },
+  { type: "command", topic: "shell-functions", q: "Define a function that takes one argument and prints it.", answer: ["greet() {\n    echo \"Hello, $1!\"\n}"], expl: "Arguments available as $1, $2, etc; call with: greet alice" },
+  { type: "mc", topic: "shell-functions", q: "How do you call a function with arguments?", choices: ["greet(alice)", "greet alice", "call greet alice", "greet 'alice'"], answer: 1, expl: "Functions called like commands; no parentheses in call" },
+  { type: "output", topic: "shell-functions", q: "What does this function output: square() { echo $(($1 * $1)); }; square 5?", answer: ["25"], expl: "Function receives 5 as $1; computes 5*5" },
+  { type: "mc", topic: "shell-functions", q: "What is the difference between return and echo in a function?", choices: ["No difference", "return sets exit status (0-255); echo outputs data", "echo is for scripts only", "return is faster"], answer: 1, expl: "return → status for if/&&/||; echo/capture → $(func) for data" },
+  { type: "command", topic: "shell-functions", q: "Create a function that returns 0 on success, 1 on failure.", answer: ["is_even() {\n    if (( $1 % 2 == 0 )); then\n        return 0\n    else\n        return 1\n    fi\n}"], expl: "return sets function exit code; use in: is_even 5 && echo 'even'" },
+  { type: "mc", topic: "shell-functions", q: "How do you capture function output as a variable?", choices: ["var=function_name", "var=$(function_name arg)", "var=function_name()", "function_name > var"], answer: 1, expl: "Use $(func) to capture stdout; return only for exit status" },
+  { type: "command", topic: "shell-functions", q: "Define a function that returns data via echo and capture it.", answer: ["double() {\n    echo $(( $1 * 2 ))\n}\nresult=$(double 5)\necho $result"], expl: "echo outputs data; $(func) captures it" },
+
+  { type: "mc", topic: "local-variables", q: "What is the scope of variables in Bash?", choices: ["Always local to function", "Global by default; local with 'local' keyword", "Always function-scoped", "Depends on assignment"], answer: 1, expl: "Without 'local', variables persist globally even inside functions" },
+  { type: "command", topic: "local-variables", q: "Declare a local variable inside a function.", answer: ["local var_name=\"value\""], expl: "'local' restricts scope to function; prevents global pollution" },
+  { type: "output", topic: "local-variables", q: "What does: count=10; f() { local count=5; echo $count; }; f; echo $count output?", answer: ["5", "10"], expl: "local shadows outer; outer unchanged" },
+  { type: "mc", topic: "local-variables", q: "Why use 'local' in functions?", choices: ["Required syntax", "Prevents variable name conflicts with outer scope", "Speeds up execution", "Required for functions"], answer: 1, expl: "'local' prevents accidentally modifying global variables" },
+
+  { type: "flags", topic: "shell-commands", q: "Explain chmod +x usage and other file operations.", flags: [
+    { flag: "+x", answer: ["Add execute permission (make executable)"] },
+    { flag: "755", answer: ["rwxr-xr-x - owner all, others read+exec"] },
+    { flag: "644", answer: ["rw-r--r-- - owner write, others read"] }
+  ], expl: "chmod controls permissions; use +x for scripts" },
+  { type: "mc", topic: "scripting-best-practices", q: "What is the most important rule for variables in shell scripts?", choices: ["Use global variables", "Always quote: \"$variable\"", "Use uppercase only", "Never use spaces"], answer: 1, expl: "Quoting prevents word splitting; protects against filenames with spaces" },
+  { type: "mc", topic: "scripting-best-practices", q: "What should be the first line of every Bash script?", choices: ["#!/usr/bin/env bash", "#!/bin/bash", "#!/bin/sh for portability", "Any of these work"], answer: 0, expl: "#!/usr/bin/env bash is most portable; finds bash via PATH" }
+]

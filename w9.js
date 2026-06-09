@@ -1,0 +1,73 @@
+[
+  { type: "mc", topic: "regex", q: "What is a regular expression?", choices: ["A pattern matching system for finding text", "A type of file format", "A shell built-in command", "A programming language"], answer: 0, expl: "Regex is a pattern used to match, find, or replace text in strings and files" },
+  { type: "mc", topic: "regex", q: "What are the two main types of regular expressions in Linux?", choices: ["Simple and Complex", "Basic Regular Expressions (BRE) and Extended Regular Expressions (ERE)", "Pattern and Non-pattern", "Local and Global"], answer: 1, expl: "BRE is default in grep, sed; ERE is used with grep -E, egrep, sed -E" },
+  { type: "command", topic: "regex", q: "Search for lines matching a pattern using grep with extended regular expressions.", answer: ["grep -E \"pattern\" filename"], expl: "-E flag enables Extended Regular Expressions; egrep is shorthand" },
+  { type: "mc", topic: "regex", q: "What does the dot (.) metacharacter match?", choices: ["Only digits", "Any single character except newline", "Literal dot", "End of line"], answer: 1, expl: "Dot matches any single character; to match literal dot, escape it: \\." },
+  { type: "output", topic: "regex", q: "What will grep -E '.at' match in 'cat bat rat hat'?", answer: ["cat", "bat", "rat", "hat"], expl: ".at matches any character followed by 'at'" },
+
+  { type: "mc", topic: "regex", q: "What does the + quantifier mean?", choices: ["Zero or more", "One or more", "Zero or one", "Exactly one"], answer: 1, expl: "+ means the preceding element appears one or more times" },
+  { type: "command", topic: "regex", q: "Find all lines with one or more 's' characters.", answer: ["grep -E \"s+\" filename"], expl: "s+ matches one or more consecutive 's' characters" },
+  { type: "mc", topic: "regex", q: "What is the difference between * and +?", choices: ["* is faster", "* means zero or more, + means one or more", "No difference", "+ only works in BRE"], answer: 1, expl: "Asterisk allows zero occurrences; plus requires at least one" },
+  { type: "output", topic: "regex", q: "Which words would match the pattern 'ca*t'?", answer: ["ct", "cat", "caat", "caaat", "any c followed by zero or more a's then t"], expl: "Asterisk = zero or more; matches ct, cat, caat, etc." },
+  { type: "command", topic: "regex", q: "Find lines matching 'color' or 'colour' using the ? quantifier.", answer: ["grep -E \"colou?r\" filename"], expl: "? means zero or one; optional 'u'" },
+
+  { type: "mc", topic: "regex", q: "What does {3} mean in a regex pattern?", choices: ["Three or more", "Exactly three", "Zero to three", "Up to three"], answer: 1, expl: "{n} matches exactly n occurrences of preceding element" },
+  { type: "command", topic: "regex", q: "Match exactly 3 digits.", answer: ["grep -E \"[0-9]{3}\" filename", "[0-9]{3}"], expl: "[0-9]{3} matches exactly 3 consecutive digits" },
+  { type: "mc", topic: "regex", q: "What does {2,5} mean?", choices: ["Between 2 and 5 occurrences", "Either 2 or 5 occurrences", "2 or more occurrences", "5 or fewer occurrences"], answer: 0, expl: "{n,m} matches between n and m occurrences" },
+  { type: "output", topic: "regex", q: "How many 'a's would [a-z]{2,4} match?", answer: ["Between 2 and 4 consecutive letters"], expl: "{2,4} specifies a range from minimum 2 to maximum 4" },
+
+  { type: "mc", topic: "regex", q: "What is a character class in regex?", choices: ["A classification of characters", "[...] brackets matching any single character inside", "A group of related patterns", "A type of quantifier"], answer: 1, expl: "Character class [abc] matches any single character: a, b, or c" },
+  { type: "command", topic: "regex", q: "Match any vowel using a character class.", answer: ["grep -E \"[aeiou]\" filename"], expl: "[aeiou] matches any single vowel character" },
+  { type: "mc", topic: "regex", q: "What does [a-z] match?", choices: ["Uppercase letters", "Any lowercase letter", "Numbers", "Special characters"], answer: 1, expl: "Range [a-z] matches any single lowercase letter" },
+  { type: "command", topic: "regex", q: "Match any digit using a character class.", answer: ["grep -E \"[0-9]\" filename"], expl: "[0-9] matches any single digit from 0 to 9" },
+  { type: "mc", topic: "regex", q: "What does [^a-z] match?", choices: ["Any lowercase letter", "Anything except lowercase letters", "Only non-alphabetic", "First letter not in range"], answer: 1, expl: "Caret ^ inside brackets negates the class; [^a-z] = NOT lowercase" },
+  { type: "command", topic: "regex", q: "Find lines without vowels using a negated character class.", answer: ["grep -E \"[^aeiou]\" filename"], expl: "[^aeiou] matches characters that are NOT vowels" },
+
+  { type: "mc", topic: "regex", q: "What does the ^ anchor do?", choices: ["Match any character", "Match start of line", "Match end of line", "Negate character class"], answer: 1, expl: "^ anchors pattern to beginning of line" },
+  { type: "command", topic: "regex", q: "Find lines starting with 'The'.", answer: ["grep -E \"^The\" filename"], expl: "^ at start ensures 'The' is at beginning of line" },
+  { type: "mc", topic: "regex", q: "What does $ anchor match?", choices: ["Start of line", "End of line", "Any special character", "End of file"], answer: 1, expl: "$ anchors pattern to end of line" },
+  { type: "command", topic: "regex", q: "Find lines ending with a digit.", answer: ["grep -E \"[0-9]$\" filename"], expl: "$ at end ensures digit is last character on line" },
+  { type: "output", topic: "regex", q: "What does ^hello$ match?", answer: ["Only lines containing exactly 'hello' and nothing else"], expl: "^ start and $ end together require entire line match" },
+
+  { type: "mc", topic: "regex", q: "What do word boundaries (\\b) match?", choices: ["The letter b", "Position between word and non-word characters", "Beginning of word", "End of word"], answer: 1, expl: "\\b matches boundary between word chars [a-zA-Z0-9_] and others" },
+  { type: "command", topic: "regex", q: "Find the word 'cat' as a whole word, not in 'concatenate' or 'cats'.", answer: ["grep -E \"\\bcat\\b\" filename"], expl: "\\b...\\b ensures word is complete, not part of larger word" },
+  { type: "mc", topic: "regex", q: "What are word characters in regex?", choices: ["Only letters", "Letters, digits, underscore [a-zA-Z0-9_]", "Only vowels", "Alphanumeric only"], answer: 1, expl: "Word characters = letters, digits, underscore; used in \\b boundaries" },
+
+  { type: "mc", topic: "regex", q: "What does grep -i do?", choices: ["Invert matches", "Case-insensitive search", "Show line numbers", "Recursive search"], answer: 1, expl: "-i flag ignores case; 'error', 'ERROR', 'Error' all match" },
+  { type: "command", topic: "regex", q: "Search case-insensitively for 'error' in a file.", answer: ["grep -i \"error\" filename"], expl: "-i makes search ignore case distinctions" },
+  { type: "mc", topic: "regex", q: "What does grep -v do?", choices: ["Show matching lines", "Show NON-matching lines (invert)", "Verbose output", "Show version"], answer: 1, expl: "-v inverts results; shows lines that don't match pattern" },
+  { type: "command", topic: "regex", q: "Show lines NOT containing 'warning'.", answer: ["grep -v \"warning\" filename"], expl: "-v flag reverses match logic" },
+  { type: "mc", topic: "regex", q: "What does grep -n do?", choices: ["Negation", "Show line numbers", "Recursive search", "Count lines"], answer: 1, expl: "-n displays line number for each match" },
+  { type: "command", topic: "regex", q: "Find all occurrences of 'error' and show their line numbers.", answer: ["grep -n \"error\" filename"], expl: "-n prefix each match with line number" },
+  { type: "mc", topic: "regex", q: "What does grep -c do?", choices: ["Show matching lines", "Count matching lines", "Case-insensitive", "Show context"], answer: 1, expl: "-c outputs count of matching lines, not the lines themselves" },
+  { type: "command", topic: "regex", q: "Count how many lines contain 'error'.", answer: ["grep -c \"error\" filename"], expl: "-c returns numeric count only" },
+  { type: "command", topic: "regex", q: "Recursively search for a pattern in all files in a directory.", answer: ["grep -r \"pattern\" directory"], expl: "-r searches directory and subdirectories" },
+  { type: "command", topic: "regex", q: "Show 2 lines after each match.", answer: ["grep -A 2 \"pattern\" filename"], expl: "-A n shows n lines after each match" },
+  { type: "command", topic: "regex", q: "Show 2 lines before each match.", answer: ["grep -B 2 \"pattern\" filename"], expl: "-B n shows n lines before each match" },
+  { type: "command", topic: "regex", q: "Show 2 lines before and after each match.", answer: ["grep -C 2 \"pattern\" filename"], expl: "-C n (context) shows n lines before and after" },
+  { type: "flags", topic: "regex", q: "Explain common grep flags.", flags: [
+    { flag: "-E", answer: ["Use Extended Regular Expressions"] },
+    { flag: "-i", answer: ["Case-insensitive search"] },
+    { flag: "-v", answer: ["Invert match — show non-matching lines"] },
+    { flag: "-n", answer: ["Show line numbers"] },
+    { flag: "-c", answer: ["Count matching lines"] },
+    { flag: "-r", answer: ["Recursive search in directories"] }
+  ], expl: "grep flags can be combined: grep -Eni searches case-insensitively with line numbers" },
+
+  { type: "mc", topic: "regex", q: "What pattern would match an email like 'user@example.com'?", choices: ["[a-z]+@[a-z]+\\.[a-z]+", "^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,}$", "[a-z]@[a-z]", "user@example.com"], answer: 1, expl: "Valid email pattern with alphanumeric, dots, dashes, and domain validation" },
+  { type: "mc", topic: "regex", q: "What pattern matches a simple IP address like 192.168.1.1?", choices: ["[0-9]{3}\\.[0-9]{3}\\.[0-9]{3}\\.[0-9]{3}", "[0-9].[0-9].[0-9].[0-9]", "192.168.1.1", "[0-9]+\\.[0-9]+\\.[0-9]+\\.[0-9]+"], answer: 0, expl: "Each octet is 1-3 digits; {3} specifies exactly 3 digits; escaped dots for literals" },
+  { type: "command", topic: "regex", q: "Find all log entries starting with ERROR, WARNING, or INFO.", answer: ["grep -E \"^(ERROR|WARNING|INFO):\" filename"], expl: "(pattern1|pattern2|pattern3) means OR; ^ anchors to start" },
+  { type: "mc", topic: "regex", q: "What does (cat|dog) match?", choices: ["Both cat and dog together", "Either 'cat' or 'dog'", "A group named catdog", "Letters c,a,t,d,o,g"], answer: 1, expl: "Pipe | inside () means OR; matches one alternative" },
+
+  { type: "command", topic: "regex", q: "Find lines containing only letters (no numbers or special characters).", answer: ["grep -E \"^[a-zA-Z]+$\" filename"], expl: "^ start, $ end, [a-zA-Z]+ one or more letters" },
+  { type: "output", topic: "regex", q: "What does grep -E '^[0-9]+$' filename match?", answer: ["Lines containing only digits, nothing else"], expl: "Anchors ensure entire line is digits only" },
+  { type: "command", topic: "regex", q: "Match words with double letters (like 'hello' with double 'l').", answer: ["grep -E \"(.)\\\\1\" filename"], expl: "(.) captures one character; \\1 backreference matches same character again" },
+  { type: "mc", topic: "regex", q: "What does [a-zA-Z0-9] match?", choices: ["Any letter or digit", "Only lowercase letters", "Only uppercase and digits", "Special characters"], answer: 0, expl: "Combined character class for letters (both cases) and digits" },
+  { type: "command", topic: "regex", q: "Find all lines that contain at least one vowel.", answer: ["grep -E \"[aeiouAEIOU]\" filename"], expl: "Character class with all vowels (both cases)" },
+  { type: "output", topic: "regex", q: "What lines would .+t match?", answer: ["Any character one or more times followed by 't'"], expl: ".+ means one or more of any character; t is literal" },
+  { type: "command", topic: "regex", q: "Search for lines with exactly 3 characters.", answer: ["grep -E \"^.{3}$\" filename"], expl: ".{3} means exactly 3 of any character; anchors bound entire line" },
+  { type: "mc", topic: "regex", q: "What is the purpose of escaping special characters in regex?", choices: ["Make them run faster", "Treat them literally instead of as metacharacters", "Encrypt the pattern", "Count occurrences"], answer: 1, expl: "Backslash \\ before special char makes it literal; \\. matches literal dot" },
+  { type: "command", topic: "regex", q: "Find lines with literal dots (filenames like script.sh or test.txt).", answer: ["grep -E \"\\\\.\" filename"], expl: "\\\\. escapes the dot to match literal period character" },
+  { type: "output", topic: "regex", q: "What does ^(A|B|C) match?", answer: ["Lines starting with A, B, or C"], expl: "^ anchors; | separates alternatives; () groups them" },
+  { type: "command", topic: "regex", q: "Find all HTTP error codes (4xx or 5xx) in a log file.", answer: ["grep -E \" [45][0-9]{2} \" filename"], expl: "[45] matches 4 or 5; [0-9]{2} matches exactly 2 digits" }
+]

@@ -1,0 +1,74 @@
+[
+  { type: "mc", topic: "conditionals", q: "What does 'if' test in Bash?", choices: ["Boolean expressions", "A command's exit status — 0 is success, non-zero is failure", "Variable values", "String lengths"], answer: 1, expl: "if runs COMMAND and tests its exit status, stored in $?" },
+  { type: "output", topic: "conditionals", q: "What does: if ls /etc; then echo ok; fi output?", answer: ["ok (with directory listing above)"], expl: "ls succeeds (exit 0), so if body runs" },
+  { type: "mc", topic: "conditionals", q: "What is the difference between [ ], [[ ]], and (( ))?", choices: ["All identical", "[ ] files/strings; [[ ]] files/strings with &&||; (( )) arithmetic", "Each for different shells", "No real difference"], answer: 1, expl: "[[ ]] is safer Bash extension; (( )) for numbers; prefer [[ ]] and (( )) in modern code" },
+  { type: "command", topic: "conditionals", q: "Test if a file exists using the correct bracket form.", answer: ["[[ -e filename ]]"], expl: "-e tests existence; [[ ]] is safer than [ ]" },
+  { type: "mc", topic: "conditionals", q: "What exit status means success in Bash?", choices: ["1", "0", "Any number > 0", "Empty string"], answer: 1, expl: "Exit status 0 = success; any non-zero = failure; stored in $?" },
+
+  { type: "mc", topic: "file-tests", q: "What does -f test?", choices: ["Exists", "Is a regular file", "Is readable", "Is first argument"], answer: 1, expl: "-f true if file exists AND is regular file (not directory)" },
+  { type: "mc", topic: "file-tests", q: "What does -d test?", choices: ["Does not exist", "Is a directory", "Is deleted", "Has duplicate name"], answer: 1, expl: "-d true if path exists AND is a directory" },
+  { type: "command", topic: "file-tests", q: "Test if a file is readable.", answer: ["[[ -r filename ]]"], expl: "-r tests read permission" },
+  { type: "command", topic: "file-tests", q: "Test if a directory exists and is readable.", answer: ["[[ -d dirname && -r dirname ]]"], expl: "-d for directory; && for both conditions" },
+  { type: "mc", topic: "file-tests", q: "What does -s test?", choices: ["File size", "Exists AND non-empty", "String length", "Symlink"], answer: 1, expl: "-s true if file exists AND has size > 0" },
+  { type: "mc", topic: "file-tests", q: "What does -z test?", choices: ["Zero-sized file", "String is empty", "Zone boundaries", "Zero variable"], answer: 1, expl: "-z true if string length is zero (empty)" },
+  { type: "mc", topic: "file-tests", q: "What does -n test?", choices: ["Non-zero number", "String is non-empty", "No newline", "File not found"], answer: 1, expl: "-n true if string has non-zero length" },
+
+  { type: "mc", topic: "string-tests", q: "How do you test if two strings are equal in [[ ]]?", choices: ["str1 = str2", "str1 == str2", "str1 -eq str2", "All work"], answer: 1, expl: "Use == in [[ ]] for clarity; single = also works" },
+  { type: "command", topic: "string-tests", q: "Test if a string matches a regex pattern.", answer: ["[[ $var =~ ^pattern ]]"], expl: "=~ in [[ ]] tests regex match" },
+  { type: "output", topic: "string-tests", q: "What does: [[ 'hello' == h* ]]; echo $? output?", answer: ["0"], expl: "== supports glob matching in [[ ]]; h* matches 'hello'" },
+
+  { type: "mc", topic: "numeric-comparison", q: "How do you compare numbers numerically in Bash?", choices: ["[[ 10 < 9 ]]", "(( 10 < 9 ))", "[ 10 -lt 9 ]", "All work"], answer: 2, expl: "[[ ]] does string comparison (alphabetic); use (( )) or -lt/-gt for numbers" },
+  { type: "mc", topic: "numeric-comparison", q: "What is wrong with: [[ \"10\" < \"9\" ]]?", choices: ["Nothing", "Does string comparison; '10' < '9' is TRUE alphabetically", "Syntax error", "Always false"], answer: 1, expl: "Inside [[ ]], < is alphabetic; use (( )) for numeric" },
+  { type: "command", topic: "numeric-comparison", q: "Test if a number is greater than 100 numerically.", answer: ["(( num > 100 ))", "[ $num -gt 100 ]"], expl: "(( )) or -gt for numeric comparison" },
+  { type: "output", topic: "numeric-comparison", q: "What does: if (( 5 > 3 )); then echo yes; fi output?", answer: ["yes"], expl: "(( )) treats as numbers; 5 > 3 is true" },
+
+  { type: "mc", topic: "input-reading", q: "What does the read command do?", choices: ["Read a file", "Pause and store user's typed line in a variable", "Read exit code", "Reload shell"], answer: 1, expl: "read pauses script and waits for user input" },
+  { type: "command", topic: "input-reading", q: "Read input with a prompt on the same line.", answer: ["read -p \"Enter name: \" name"], expl: "-p displays prompt and reads into variable" },
+  { type: "mc", topic: "input-reading", q: "What does read -s do?", choices: ["Skip input", "Silent — hide typed characters (for passwords)", "Store in variable", "Search mode"], answer: 1, expl: "-s suppresses echo for password entry" },
+  { type: "command", topic: "input-reading", q: "Read password silently with a timeout of 5 seconds.", answer: ["read -s -t 5 -p \"Password: \" pw"], expl: "-s silent, -t timeout, -p prompt" },
+  { type: "mc", topic: "input-reading", q: "What does read -r do?", choices: ["Raw input — don't interpret backslashes", "Reverse order", "Read recursively", "Remove trailing newline"], answer: 0, expl: "-r prevents backslash escape processing" },
+
+  { type: "mc", topic: "while-loops", q: "What does a while loop do?", choices: ["Execute once", "Repeat while CONDITION is true", "Repeat until true", "For each item"], answer: 1, expl: "while runs as long as condition is true; loop stops when false" },
+  { type: "command", topic: "while-loops", q: "Write a counter loop that counts 1 to 3.", answer: ["i=1; while (( i <= 3 )); do echo $i; (( i++ )); done"], expl: "Counter loop: initialize, test, increment" },
+  { type: "output", topic: "while-loops", q: "What does: i=1; while (( i <= 2 )); do echo $i; (( i++ )); done output?", answer: ["1", "2"], expl: "Runs twice: i=1 (true), i=2 (true), i=3 (false, stop)" },
+  { type: "mc", topic: "while-loops", q: "What is the correct pattern to read a file line by line?", choices: ["while read line; do", "while IFS= read -r line; do ... done < file", "for line in file;", "cat file | while read;"], answer: 1, expl: "while IFS= read -r line; do ... done < file is canonical pattern" },
+  { type: "command", topic: "while-loops", q: "Read each line from a file and print it with line number.", answer: ["while IFS= read -r line; do echo \"$line\"; done < file.txt"], expl: "Preserves spaces with IFS=; -r doesn't eat backslashes" },
+
+  { type: "mc", topic: "until-loops", q: "What does an until loop do?", choices: ["Same as while", "Repeat UNTIL the condition becomes true (opposite of while)", "Loop forever", "Never execute"], answer: 1, expl: "until is like while but with inverted logic; loop stops when true" },
+  { type: "command", topic: "until-loops", q: "Wait for a file to appear using until.", answer: ["until [[ -f /tmp/ready ]]; do sleep 1; done"], expl: "until loops until condition is true" },
+  { type: "mc", topic: "until-loops", q: "When should you use until instead of while?", choices: ["Never", "When the negated condition reads more naturally", "Only for files", "Always"], answer: 1, expl: "until is sometimes clearer: 'until file exists' vs 'while file doesn't exist'" },
+
+  { type: "mc", topic: "loop-control", q: "What does break do in a loop?", choices: ["Break the condition", "Exit the loop immediately", "Break on error", "Skip iteration"], answer: 1, expl: "break leaves the loop; stop execution and continue after done" },
+  { type: "mc", topic: "loop-control", q: "What does continue do in a loop?", choices: ["Continue to next command", "Skip to next iteration", "Continue past break", "Pause loop"], answer: 1, expl: "continue skips rest of current iteration; jumps to next loop cycle" },
+  { type: "command", topic: "loop-control", q: "Read input until user types 'quit'.", answer: ["while true; do\n    read -p 'Enter (quit to exit): ' input\n    [[ \"$input\" == 'quit' ]] && break\n    echo \"You said: $input\"\ndone"], expl: "while true; break when condition met" },
+
+  { type: "mc", topic: "arguments", q: "What does $1 represent?", choices: ["Current directory", "First positional argument", "First file", "Exit status"], answer: 1, expl: "$1 is first arg; $2 second; $0 is script name" },
+  { type: "mc", topic: "arguments", q: "What does $# represent?", choices: ["Comment", "Number of arguments passed (not counting $0)", "Last argument", "Script name"], answer: 1, expl: "$# counts positional arguments" },
+  { type: "mc", topic: "arguments", q: "What is the correct way to pass all arguments to another command?", choices: ["$*", "$@", "\"$@\"", "$1 $2 $3"], answer: 2, expl: "\"$@\" expands to \"$1\" \"$2\" ... preserving each arg as separate word" },
+  { type: "output", topic: "arguments", q: "If called: ./script.sh a b c, what does echo \"$#\" output?", answer: ["3"], expl: "$# counts the three arguments (not $0)" },
+  { type: "command", topic: "arguments", q: "Access the 10th positional argument.", answer: ["${10}"], expl: "Use braces for arguments beyond $9" },
+
+  { type: "mc", topic: "parameter-expansion", q: "What does ${1:-default} do?", choices: ["Set argument to default", "Use argument if set, else use default", "Error if default", "Replace all defaults"], answer: 1, expl: "${var:-default} provides fallback when var is unset/empty" },
+  { type: "output", topic: "parameter-expansion", q: "If $1 is unset, what does: echo \"${1:-none}\" output?", answer: ["none"], expl: "Default expansion when argument missing" },
+  { type: "mc", topic: "parameter-expansion", q: "What does ${1:?error message} do?", choices: ["Use default", "Error and exit if $1 is missing", "Check type", "Ask user"], answer: 1, expl: "${var:?msg} aborts with message if var unset" },
+
+  { type: "mc", topic: "shift", q: "What does shift do?", choices: ["Move forward", "Discard $1 and renumber all arguments", "Shift position", "Change shell"], answer: 1, expl: "shift discards $1; $2→$1, $3→$2, etc.; $# decrements" },
+  { type: "output", topic: "shift", q: "Before shift: $1=a $2=b $3=c. After shift, what is $1?", answer: ["b"], expl: "shift drops first arg; remaining args shift left" },
+  { type: "command", topic: "shift", q: "Process each argument one by one using shift in a loop.", answer: ["while (( $# > 0 )); do\n    echo \"Processing: $1\"\n    shift\ndone"], expl: "Decrement $# and renumber with each shift" },
+  { type: "mc", topic: "shift", q: "What does shift 2 do?", choices: ["Shift twice (discard two args)", "Shift to position 2", "Shift once", "Shift variable by 2"], answer: 0, expl: "shift 2 discards first two args at once" },
+
+  { type: "mc", topic: "getopts", q: "What does getopts do?", choices: ["Get options from file", "Parse command-line flags cleanly (-v, -o file)", "Get all settings", "Global options"], answer: 1, expl: "getopts parses short flags; handles -v, -o file automatically" },
+
+  { type: "mc", topic: "troubleshooting", q: "What does set -e do?", choices: ["Set environment", "Exit on first command failure (errexit)", "Enable expansions", "Error messages"], answer: 1, expl: "set -e stops script if any command fails" },
+  { type: "mc", topic: "troubleshooting", q: "What does set -u do?", choices: ["Unset variables", "Error on unset variable (nounset)", "Uppercase", "Unload modules"], answer: 1, expl: "set -u treats unset variables as error; catches typos" },
+  { type: "mc", topic: "troubleshooting", q: "What does set -o pipefail do?", choices: ["Fail on pipe output", "Failure anywhere in pipe causes whole pipe to fail", "Pipe failure mode", "Optional pipe"], answer: 1, expl: "set -o pipefail: if left command fails, whole pipeline fails" },
+  { type: "command", topic: "troubleshooting", q: "Add the three essential safety settings to a script.", answer: ["set -euo pipefail"], expl: "Put at top of every serious script" },
+  { type: "mc", topic: "troubleshooting", q: "What does set -x do?", choices: ["Execute in background", "Print each command (with expanded vars) before running", "Exit on error", "Expand variables"], answer: 1, expl: "set -x traces execution; useful for debugging" },
+  { type: "command", topic: "troubleshooting", q: "Enable tracing to debug a script without editing it.", answer: ["bash -x script.sh"], expl: "-x flag enables trace mode from command line" },
+  { type: "mc", topic: "troubleshooting", q: "What tool catches common Bash mistakes automatically?", choices: ["bash lint", "shellcheck", "bash check", "linter"], answer: 1, expl: "shellcheck finds syntax errors, unsafe patterns, missing quotes" },
+  { type: "command", topic: "troubleshooting", q: "Check a script for common errors.", answer: ["shellcheck script.sh"], expl: "shellcheck catches typos, missing quotes, and more" },
+
+  { type: "mc", topic: "error-handling", q: "What is the most common beginner error in if statements?", choices: ["Missing fi", "Spaces around = in variable", "String vs numeric compare", "All equally common"], answer: 2, expl: "[[ \"10\" < \"9\" ]] is true (alphabetic); use (( )) for numbers" },
+  { type: "mc", topic: "error-handling", q: "What error comes from: name = \"Alice\"?", choices: ["Syntax error", "Bash tries to run 'name' as command; error not found", "Variable not set", "No error"], answer: 1, expl: "Spaces around = cause bash to interpret name as command" },
+  { type: "command", topic: "error-handling", q: "Check if a script has syntax errors without running it.", answer: ["bash -n script.sh"], expl: "-n checks syntax without executing" }
+]

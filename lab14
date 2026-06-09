@@ -1,0 +1,61 @@
+[
+  { type: "mc", topic: "bash-scripting", q: "What is the first line of a Bash script called?", choices: ["Comment", "Shebang (#!/bin/bash)", "Header", "Declaration"], answer: 1, expl: "Shebang tells kernel to execute with bash interpreter" },
+  { type: "command", topic: "bash-scripting", q: "Create a simple bash script file called 'myscript.sh'.", answer: ["cat > myscript.sh << 'EOF'\n#!/bin/bash\necho Hello\nEOF"], expl: "Use here-document to create script file" },
+  { type: "command", topic: "bash-scripting", q: "Make a bash script executable.", answer: ["chmod +x myscript.sh"], expl: "chmod +x adds execute permission" },
+  { type: "command", topic: "bash-scripting", q: "Run an executable bash script from current directory.", answer: ["./myscript.sh"], expl: "./ specifies current directory; required when not in PATH" },
+
+  { type: "mc", topic: "variables", q: "What is the correct syntax to assign a variable in Bash?", choices: ["VAR = value", "VAR=value", "VAR := value", "set VAR value"], answer: 1, expl: "Variable assignment must have NO spaces around =" },
+  { type: "command", topic: "variables", q: "Assign a variable and print its value.", answer: ["NAME=Alice", "echo $NAME"], expl: "$NAME expands variable; or ${NAME} with braces" },
+  { type: "mc", topic: "variables", q: "What does readonly variable do?", choices: ["Can be read only", "Cannot be changed after assignment", "Read-only mode", "Read output only"], answer: 1, expl: "readonly VAR=value prevents modification; useful for constants" },
+  { type: "command", topic: "variables", q: "Declare a readonly variable called TIMESTAMP.", answer: ["readonly TIMESTAMP=$(date +%Y-%m-%d)"], expl: "readonly + command substitution for constant value" },
+
+  { type: "mc", topic: "command-substitution", q: "What does $(command) do in Bash?", choices: ["Group commands", "Execute command and capture its output", "Create subshell", "Optional command"], answer: 1, expl: "$(cmd) replaces with cmd's stdout; equivalent to backticks `cmd`" },
+  { type: "command", topic: "command-substitution", q: "Capture the output of 'whoami' command into a variable.", answer: ["USER=$(whoami)", "USERNAME=$(whoami)"], expl: "$(whoami) captures command output into variable" },
+  { type: "command", topic: "command-substitution", q: "Use command substitution to get hostname and store in a variable.", answer: ["HOSTNAME=$(hostname)", "HOST=$(hostname)"], expl: "$(hostname) returns system hostname" },
+  { type: "command", topic: "command-substitution", q: "Capture the output of 'sha256sum' on a string.", answer: ["HASH=$(echo 'text' | sha256sum)"], expl: "Pipe output to sha256sum, capture result" },
+
+  { type: "mc", topic: "here-documents", q: "What does <<EOF do in Bash?", choices: ["Redirect input from file", "Start here-document (multiple lines until EOF)", "Bitwise operator", "End of file marker"], answer: 1, expl: "<<EOF/here-document allows multi-line input in script" },
+  { type: "command", topic: "here-documents", q: "Create a file with heredoc and variable expansion.", answer: ["cat > file.txt << 'EOF'\nHello $USER\nEOF"], expl: "<<'EOF' with quotes prevents variable expansion; <<EOF allows it" },
+  { type: "command", topic: "here-documents", q: "Write multiple lines to a file using heredoc without expanding variables.", answer: ["cat > file.txt << 'EOF'\n$USER $HOST\nEOF"], expl: "<<'EOF' (quoted) keeps $USER, $HOST literal" },
+  { type: "command", topic: "here-documents", q: "Append lines to a file using heredoc.", answer: ["cat >> file.txt << EOF\nAppended line\nEOF"], expl: ">> appends to file; <<EOF inserts content" },
+
+  { type: "mc", topic: "functions", q: "What is the basic syntax for a Bash function?", choices: ["func() { }", "function func { }", "def func():", "Both 1 and 2"], answer: 3, expl: "Both syntaxes work: func() { } or function func { }" },
+  { type: "command", topic: "functions", q: "Define a function that prints 'Hello World'.", answer: ["hello() { echo 'Hello World'; }", "function hello { echo 'Hello World'; }"], expl: "Function definition followed by body in braces" },
+  { type: "command", topic: "functions", q: "Call a function multiple times and capture its output.", answer: ["OUTPUT=$(hello)", "hello"], expl: "$(hello) captures function output into variable" },
+  { type: "mc", topic: "functions", q: "What does 'local' keyword do in a function?", choices: ["Make variable global", "Restrict variable to function scope (local)", "Load library", "Local file"], answer: 1, expl: "local VAR restricts variable to function scope" },
+  { type: "command", topic: "functions", q: "Define a function with local variables.", answer: ["myFunc() { local VAR='value'; echo $VAR; }"], expl: "local keyword inside function limits variable scope" },
+
+  { type: "mc", topic: "exit-codes", q: "What does $? variable contain?", choices: ["Current line number", "Exit status/code of last command", "Process ID", "Current user"], answer: 1, expl: "$? = 0 means success; non-zero means failure" },
+  { type: "command", topic: "exit-codes", q: "Check the exit code of the last command.", answer: ["echo $?"], expl: "$? holds exit status (0=success, >0=failure)" },
+  { type: "command", topic: "exit-codes", q: "Return a specific exit code from a function.", answer: ["myFunc() { return 42; }"], expl: "return N sets exit code to N (0-255)" },
+  { type: "command", topic: "exit-codes", q: "Capture a function's exit code after calling it.", answer: ["myFunc", "STATUS=$?"], expl: "Call function, then immediately read $?" },
+
+  { type: "mc", topic: "parameter-expansion", q: "What does ${1:-default} do?", choices: ["Use argument 1 if set, else 'default'", "Argument 1 with default formatter", "Optional argument", "Substring extraction"], answer: 0, expl: "${VAR:-default} provides fallback when VAR is unset/empty" },
+  { type: "command", topic: "parameter-expansion", q: "Provide a default value if first argument is missing.", answer: ["OUTPUT_FILE=${1:-/tmp/output.txt}"], expl: "${1:-...} uses $1 or default if empty" },
+  { type: "mc", topic: "parameter-expansion", q: "What does ${#VAR} do?", choices: ["Remove VAR", "Get length of VAR", "Expansion of VAR", "Optional VAR"], answer: 1, expl: "${#VAR} returns string length of VAR" },
+  { type: "command", topic: "parameter-expansion", q: "Get the length of a variable.", answer: ["LENGTH=${#MYVAR}"], expl: "${#MYVAR} returns character count" },
+
+  { type: "command", topic: "string-manipulation", q: "Reverse a string using rev command.", answer: ["echo 'hello' | rev"], expl: "rev reverses string character order" },
+  { type: "command", topic: "string-manipulation", q: "Convert string to uppercase using tr command.", answer: ["echo 'hello' | tr 'a-z' 'A-Z'"], expl: "tr translates characters: lowercase to uppercase" },
+  { type: "command", topic: "string-manipulation", q: "Count characters in a string.", answer: ["echo -n 'hello' | wc -c"], expl: "-n prevents newline; wc -c counts bytes" },
+
+  { type: "command", topic: "file-operations", q: "Create a file with content using echo and redirection.", answer: ["echo 'content' > file.txt"], expl: "> creates/overwrites file; >> appends" },
+  { type: "command", topic: "file-operations", q: "Append a line to an existing file.", answer: ["echo 'new line' >> file.txt"], expl: ">> appends without overwriting" },
+  { type: "command", topic: "file-operations", q: "Read entire file content into a variable.", answer: ["CONTENT=$(cat file.txt)"], expl: "$(cat file) captures file content" },
+  { type: "command", topic: "file-operations", q: "Get the hash of a file using sha256sum.", answer: ["sha256sum file.txt"], expl: "sha256sum outputs hash + filename" },
+
+  { type: "mc", topic: "bash-scripting", q: "What does 'shebang' do in a script?", choices: ["Add comment", "Tell kernel which interpreter to use", "Define path", "Start block"], answer: 1, expl: "#!/bin/bash at top tells kernel to use bash interpreter" },
+  { type: "command", topic: "bash-scripting", q: "Write a script that takes one argument and uses it.", answer: ["#!/bin/bash\necho \"You said: $1\""], expl: "$1 is first positional argument" },
+  { type: "command", topic: "bash-scripting", q: "Check if a file exists in a Bash script.", answer: ["if [ -f filename ]; then\n  echo exists\nfi"], expl: "[ -f file ] tests if regular file exists" },
+  { type: "command", topic: "bash-scripting", q: "Create a script with conditional logic.", answer: ["if [ $1 -gt 10 ]; then\n  echo 'greater than 10'\nelse\n  echo 'not greater'\nfi"], expl: "-gt is numeric comparison 'greater than'" },
+
+  { type: "output", topic: "command-substitution", q: "What does: echo $(whoami) output?", answer: ["Current username"], expl: "$(whoami) expands to logged-in user" },
+  { type: "output", topic: "string-manipulation", q: "What does: echo 'hello' | rev output?", answer: ["olleh"], expl: "rev reverses string character-by-character" },
+  { type: "output", topic: "functions", q: "What does this script output?\ngreet() { echo Hello; }\ngreet", answer: ["Hello"], expl: "Function called with no arguments prints 'Hello'" },
+  { type: "output", topic: "variables", q: "What does: VAR='test'; echo $VAR output?", answer: ["test"], expl: "$VAR expands to assigned value" },
+
+  { type: "mc", topic: "bash-scripting", q: "What does 'source' command do?", choices: ["Find source code", "Read and execute script in current shell", "Create source", "Display source"], answer: 1, expl: "source script.sh runs script in current shell (changes persist)" },
+  { type: "command", topic: "bash-scripting", q: "Execute a Bash script in the current shell context.", answer: ["source myscript.sh", ". myscript.sh"], expl: "source or . runs script in current shell" },
+  { type: "command", topic: "bash-scripting", q: "Debug a script by showing each command before execution.", answer: ["bash -x myscript.sh"], expl: "-x flag enables debug trace output" },
+  { type: "command", topic: "bash-scripting", q: "Check script syntax without executing it.", answer: ["bash -n myscript.sh"], expl: "-n checks syntax only, doesn't run" }
+]

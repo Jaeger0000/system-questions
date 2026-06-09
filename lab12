@@ -1,0 +1,70 @@
+[
+  { type: "mc", topic: "grep-usage", q: "What does grep -i flag do?", choices: ["Input file", "Case-insensitive search", "Invert match", "Integer only"], answer: 1, expl: "grep -i ignores case; finds COLD, cold, Cold all the same" },
+  { type: "mc", topic: "grep-usage", q: "What does grep -c flag do?", choices: ["Change case", "Count matching lines (print number only)", "Column output", "Combine files"], answer: 1, expl: "grep -c outputs count instead of printing lines" },
+  { type: "mc", topic: "grep-usage", q: "What does grep -v flag do?", choices: ["Verbose output", "Invert match (show non-matching lines)", "Version", "Validate"], answer: 1, expl: "grep -v shows lines that DON'T match pattern" },
+  { type: "command", topic: "grep-usage", q: "Find all complaints containing 'cold' (case-insensitive) with line numbers.", answer: ["grep -in 'cold' complaints.txt"], expl: "-i case-insensitive, -n show line numbers" },
+  { type: "command", topic: "grep-usage", q: "Count how many times 'alice' appears in complaints.txt (case-insensitive).", answer: ["grep -ci 'alice' complaints.txt"], expl: "-c counts, -i ignores case" },
+  { type: "command", topic: "grep-usage", q: "Find all complaints from April 12 or April 13 using regex.", answer: ["grep -E '^2026-04-1[2-3]' complaints.txt"], expl: "^ anchors to start; [2-3] matches either digit" },
+  { type: "command", topic: "grep-usage", q: "Show all ERROR lines with 1 line before and after for context.", answer: ["grep -B 1 -A 1 'ERROR' logfile.txt"], expl: "-B before, -A after; -C for both sides" },
+
+  { type: "mc", topic: "sed-usage", q: "What does sed 's/old/new/' do?", choices: ["Show old", "Substitute first occurrence on each line", "Search only", "Save edited"], answer: 1, expl: "sed s command replaces first match per line" },
+  { type: "mc", topic: "sed-usage", q: "What does the 'g' flag in sed 's/old/new/g' do?", choices: ["Go to line", "Global - replace all occurrences on line", "Group", "Generate"], answer: 1, expl: "g flag makes replacement global (all occurrences per line)" },
+  { type: "command", topic: "sed-usage", q: "Replace all colons with pipes in menu.txt.", answer: ["sed 's/:/|/g' menu.txt"], expl: "s/:/|/g substitutes globally" },
+  { type: "command", topic: "sed-usage", q: "Delete all lines containing 'cold' from menu.txt.", answer: ["sed '/cold/d' menu.txt"], expl: "/pattern/d deletes lines matching pattern" },
+  { type: "command", topic: "sed-usage", q: "Show only lines 5 through 10 of a file.", answer: ["sed -n '5,10p' menu.txt"], expl: "-n suppresses default output; p prints selected lines" },
+  { type: "command", topic: "sed-usage", q: "Insert a header line before line 1 of menu.txt.", answer: ["sed '1i\\=== MENU ===' menu.txt"], expl: "1i\\TEXT inserts before line 1" },
+  { type: "command", topic: "sed-usage", q: "Edit menu.txt in place with a backup.", answer: ["sed -i.bak 's/hot/HOT/g' menu.txt"], expl: "-i.bak modifies file, keeps original as .bak" },
+
+  { type: "mc", topic: "awk-usage", q: "In awk, what does $1 represent?", choices: ["First variable", "First field of current line", "Field count", "Line number"], answer: 1, expl: "$0 is whole line; $1, $2, ... are individual fields" },
+  { type: "mc", topic: "awk-usage", q: "In awk, what does NR represent?", choices: ["Number of Results", "Current line/record number", "Non-Range", "Not Ready"], answer: 1, expl: "NR increments with each line; NF is number of fields" },
+  { type: "command", topic: "awk-usage", q: "Print the second field from each line of employees.txt (split on ':').", answer: ["awk -F: '{print $2}' employees.txt"], expl: "-F: sets field separator to colon" },
+  { type: "command", topic: "awk-usage", q: "Print only lines where field 3 is greater than 80000.", answer: ["awk '$3 > 80000 {print}' file.txt"], expl: "Numeric comparison works on fields directly" },
+  { type: "command", topic: "awk-usage", q: "Skip the header line and print remaining data.", answer: ["awk 'NR>1 {print}' file.csv"], expl: "NR>1 skips first line (header)" },
+  { type: "command", topic: "awk-usage", q: "Sum all values in the first column and print the total.", answer: ["awk '{sum += $1} END {print sum}' file.txt"], expl: "Accumulate in BEGIN/END block; print in END" },
+
+  { type: "mc", topic: "field-separation", q: "How do you set field separator in awk to comma?", choices: ["awk --sep ','", "awk -F,", "awk -d,", "awk --delimiter ,"], answer: 1, expl: "-F flag sets input field separator" },
+  { type: "command", topic: "field-separation", q: "Extract the third comma-separated field from sales.csv.", answer: ["awk -F, '{print $3}' sales.csv"], expl: "-F, splits on comma" },
+  { type: "command", topic: "field-separation", q: "Split a tab-separated file (staff.txt) and print the second field.", answer: ["awk -F'\\t' '{print $2}' staff.txt"], expl: "-F'\\\\t' splits on tabs" },
+
+  { type: "mc", topic: "pattern-matching", q: "What does /^ERROR/ match in awk?", choices: ["Any ERROR", "Lines starting with ERROR", "ERROR at end", "Optional E"], answer: 1, expl: "^ anchors regex to line start" },
+  { type: "command", topic: "pattern-matching", q: "Find all lines in a file where the second field matches 'Engineering'.", answer: ["awk -F: '$2 ~ /Engineering/ {print}' file.txt", "awk -F: '$2 == \"Engineering\" {print}' file.txt"], expl: "~ for regex, == for exact string match" },
+  { type: "command", topic: "pattern-matching", q: "Find lines where field 5 does NOT match '@partners.com'.", answer: ["awk '$5 !~ /@partners\\.com/ {print}' file.txt"], expl: "!~ for negation; \\\\. escapes literal dot" },
+
+  { type: "mc", topic: "data-aggregation", q: "What are awk associative arrays used for?", choices: ["Storing sequences", "Grouping and counting (key-value pairs)", "Sorting data", "File operations"], answer: 1, expl: "Arrays indexed by strings enable powerful grouping: count[key]++" },
+  { type: "command", topic: "data-aggregation", q: "Count occurrences of each product in sales.csv.", answer: ["awk -F, 'NR>1 {count[$2]++} END {for (item in count) print item, count[item]}' sales.csv"], expl: "Associative array counts per product; loop in END" },
+  { type: "command", topic: "data-aggregation", q: "Calculate total revenue per region using awk.", answer: ["awk -F, 'NR>1 {rev[$2] += $4 * $5} END {for (region in rev) print region, rev[region]}' sales.csv"], expl: "Accumulate revenue by region; print all in END" },
+  { type: "command", topic: "data-aggregation", q: "Group employees by department and count per department.", answer: ["awk -F: '{dept[$3]++} END {for (d in dept) print d, dept[d]}' employees.txt"], expl: "Count by grouping on department field" },
+
+  { type: "mc", topic: "printf-formatting", q: "What does %-15s format mean in awk printf?", choices: ["15 spaces", "Left-aligned string in 15-character field", "Right-aligned string", "Optional string"], answer: 1, expl: "%-15s pads to 15 chars, left-aligned; %15s is right-aligned" },
+  { type: "mc", topic: "printf-formatting", q: "What does %.2f format mean in awk printf?", choices: ["2 decimal places", "Float with 2 significant digits", "2 times float", "Fixed 2.0"], answer: 0, expl: "%.2f formats float to exactly 2 decimal places" },
+  { type: "command", topic: "printf-formatting", q: "Print name and salary aligned: name left (20 chars), salary right (8 chars).", answer: ["awk -F: '{printf \"%-20s %8d\\\\n\", $2, $4}' employees.txt"], expl: "%-20s left, %8d right, \\\\n newline" },
+  { type: "command", topic: "printf-formatting", q: "Format revenue with exactly 2 decimal places using printf.", answer: ["awk 'BEGIN {printf \"Total: $%.2f\\\\n\", 1234.5}' "], expl: "%.2f produces exactly 2 decimal places" },
+
+  { type: "mc", topic: "sorting", q: "What does sort -n flag do?", choices: ["No sorting", "Numeric sort (vs alphabetic)", "Negative numbers", "Name sorting"], answer: 1, expl: "sort -n sorts numerically; default is alphabetic" },
+  { type: "mc", topic: "sorting", q: "What does sort -k2 mean?", choices: ["Sort by second field", "Keep 2 lines", "Kill field 2", "Key type 2"], answer: 0, expl: "-k column sorts by specified column" },
+  { type: "command", topic: "sorting", q: "Sort by salary (field 4) in descending numeric order.", answer: ["sort -t: -k4 -nr employees.txt"], expl: "-t: field sep, -k4 column 4, -nr numeric reverse" },
+  { type: "command", topic: "sorting", q: "Sort by two keys: primary by count descending, secondary by name ascending.", answer: ["sort -k1,1nr -k2,2 output.txt"], expl: "-k1,1nr first column numeric reverse, -k2,2 second ascending" },
+
+  { type: "command", topic: "text-processing", q: "Use grep to find ERROR lines, then count them with awk.", answer: ["grep ERROR logfile.txt | awk '{count++} END {print count}'"], expl: "Pipeline: grep filters, awk counts" },
+  { type: "command", topic: "text-processing", q: "Use sed to remove spaces around commas, then pipe to awk.", answer: ["sed -E 's/ *, ***/,/**g' sales.csv | awk -F, '{print $2}'"], expl: "sed cleans, awk processes" },
+  { type: "command", topic: "text-processing", q: "Find all 404 errors in access log, extract and count IPs.", answer: ["grep ' 404 ' access.log | awk '{count[$1]++} END {for (ip in count) print count[ip], ip}'"], expl: "Pipeline: grep filters 404, awk groups by IP" },
+
+  { type: "mc", topic: "BEGIN-END", q: "When does a BEGIN block run in awk?", choices: ["Never", "Once before any input is read", "For each line", "Once at end"], answer: 1, expl: "BEGIN { } runs before processing input; END { } runs after" },
+  { type: "mc", topic: "BEGIN-END", q: "When does an END block run in awk?", choices: ["Before input", "Never", "For each line", "Once after all input is processed"], answer: 3, expl: "END { } runs after all lines are processed; use for totals" },
+  { type: "command", topic: "BEGIN-END", q: "Print a header before processing, then totals after.", answer: ["awk 'BEGIN {print \"Name|Salary\"} {sum += $2} END {print \"Total:\", sum}' file.txt"], expl: "BEGIN for header, main block for processing, END for totals" },
+
+  { type: "output", topic: "awk-usage", q: "What does: awk '{print $2}' <<< 'a b c' output?", answer: ["b"], expl: "$2 is second field; default separator is space" },
+  { type: "output", topic: "awk-usage", q: "What does: awk -F: '{print $1, $3}' <<< 'john:x:1000' output?", answer: ["john 1000"], expl: "-F: sets separator; prints fields 1 and 3" },
+  { type: "output", topic: "grep-usage", q: "What does: grep -c 'ERROR' logfile.txt output?", answer: ["Single number (count of ERROR lines)"], expl: "-c outputs count only" },
+  { type: "output", topic: "sed-usage", q: "What does: sed 's/a/b/g' <<< 'aaa' output?", answer: ["bbb"], expl: "s substitutes; g makes it global" },
+
+  { type: "command", topic: "pipelines", q: "Combine grep and awk: find 'ERROR' lines, then count by IP.", answer: ["grep ERROR access.log | awk '{count[$1]++} END {for (ip in count) print count[ip], ip}'"], expl: "Pipe chains: grep filters, awk aggregates" },
+  { type: "command", topic: "pipelines", q: "Use sed, awk, and sort together to clean and analyze sales data.", answer: ["sed 's/ *, ***/,/**g' sales.csv | awk -F, 'NR>1 {total[$2]++} END {for (p in total) print p, total[p]}' | sort"], expl: "Three-stage pipeline" },
+
+  { type: "mc", topic: "text-processing", q: "What is the purpose of the field separator (-F) in awk?", choices: ["Filter rows", "Define how each line is split into fields", "Find files", "Format output"], answer: 1, expl: "-F sets input field separator; -v OFS sets output separator" },
+  { type: "command", topic: "text-processing", q: "Extract field 2 from a colon-separated file and print with numeric count.", answer: ["awk -F: '{print NR, $2}' file.txt"], expl: "NR is line number; useful for adding sequence" },
+  { type: "command", topic: "text-processing", q: "Find lines where field 3 matches a regex pattern /^[0-9]{3}$/ (exactly 3 digits).", answer: ["awk '$3 ~ /^[0-9]{3}$/ {print}' file.txt"], expl: "~ operator matches regex on field" },
+
+  { type: "mc", topic: "data-aggregation", q: "How do you initialize a minimum value in awk correctly?", choices: ["min = 0", "min = empty string", "Check first: if (min == \"\" || value < min) min = value", "min = 999999"], answer: 2, expl: "Must handle first occurrence specially; empty string or using first value" },
+  { type: "command", topic: "data-aggregation", q: "Calculate min, max, and average salary per department.", answer: ["awk -F: '{dept[$3]++; if (min[$3]==\"\" || $4 < min[$3]) min[$3]=$4; if (max[$3]==\"\" || $4 > max[$3]) max[$3]=$4; total[$3]+=$4} END {for (d in dept) printf \"%s|%d|%d|%d|%.2f\\\\n\", d, dept[d], min[d], max[d], total[d]/dept[d]}' employees.txt"], expl: "Parallel arrays for aggregation; printf for formatting" }
+]

@@ -1,0 +1,86 @@
+[
+  { type: "mc", topic: "unix-pipes", q: "What is the Unix philosophy?", choices: ["Do everything with one big tool", "Make each program do one thing well", "Use GUI whenever possible", "Avoid using pipes"], answer: 1, expl: "Doug McIlroy at Bell Labs (1978): small tools connected by pipes scale to enormous problems" },
+  { type: "mc", topic: "unix-pipes", q: "What are the three standard streams?", choices: ["input, process, output", "stdin (fd 0), stdout (fd 1), stderr (fd 2)", "read, write, execute", "beginning, middle, end"], answer: 1, expl: "stdin defaults to keyboard, stdout/stderr to terminal; can be redirected" },
+  { type: "mc", topic: "unix-pipes", q: "What does the pipe | operator do?", choices: ["Performs OR logic", "Sends one process's stdout to another's stdin", "Combines two files", "Terminates a command"], answer: 1, expl: "Pipes chain tools together; output of left command becomes input of right" },
+  { type: "command", topic: "unix-pipes", q: "Redirect stdout to a file, overwriting it.", answer: ["command > file"], expl: "> redirects stdout; >> appends" },
+  { type: "command", topic: "unix-pipes", q: "Redirect stderr to a file.", answer: ["command 2> file"], expl: "File descriptor 2 is stderr; 1 is stdout" },
+
+  { type: "mc", topic: "cut-command", q: "What does cut do?", choices: ["Delete lines", "Extract columns from input", "Cut files in half", "Sort output"], answer: 1, expl: "cut slices fields or character ranges from each line" },
+  { type: "command", topic: "cut-command", q: "Extract the first field from a colon-separated file.", answer: ["cut -d':' -f1 filename"], expl: "-d sets delimiter; -f specifies field numbers" },
+  { type: "output", topic: "cut-command", q: "What does: cut -c1-5 'hello world' output?", answer: ["hello"], expl: "-c selects character positions 1-5" },
+  { type: "mc", topic: "cut-command", q: "What is the default field delimiter for cut?", choices: ["Space", "Tab", "Comma", "Newline"], answer: 1, expl: "Default is TAB; use -d to change" },
+  { type: "command", topic: "cut-command", q: "Extract the 2nd and 4th fields from a comma-separated file.", answer: ["cut -d',' -f2,4 filename"], expl: "Multiple fields separated by commas" },
+
+  { type: "mc", topic: "paste-command", q: "What does paste do?", choices: ["Glue two files together vertically", "Merge corresponding lines from files side-by-side", "Duplicate a file", "Clean up whitespace"], answer: 1, expl: "paste joins lines from multiple files using TAB (or custom) separator" },
+  { type: "command", topic: "paste-command", q: "Merge two files side-by-side with comma separator.", answer: ["paste -d',' file1 file2"], expl: "-d sets output delimiter" },
+  { type: "output", topic: "paste-command", q: "What does: paste -sd',' colors.txt output?", answer: ["Joins all lines from colors.txt into one comma-separated row"], expl: "-s (serial) flattens file onto single line" },
+  { type: "mc", topic: "paste-command", q: "What does -s flag do in paste?", choices: ["Skip lines", "Serial mode — each file becomes one row", "Sort output", "Single column"], answer: 1, expl: "-s flattens each file onto a single output line" },
+
+  { type: "mc", topic: "tr-command", q: "What does tr do?", choices: ["Translate ranges of numbers", "Translate/replace/delete individual characters", "Transform text format", "Trim whitespace"], answer: 1, expl: "tr maps characters from SET1 to SET2 or deletes them" },
+  { type: "command", topic: "tr-command", q: "Convert all lowercase letters to uppercase.", answer: ["tr 'a-z' 'A-Z'"], expl: "Maps each char in first set to corresponding char in second" },
+  { type: "output", topic: "tr-command", q: "What does: echo 'hello123' | tr -d '0-9' output?", answer: ["hello"], expl: "-d deletes all digits" },
+  { type: "command", topic: "tr-command", q: "Squeeze multiple spaces into a single space.", answer: ["tr -s ' '"], expl: "-s (squeeze) collapses runs of repeated chars" },
+  { type: "mc", topic: "tr-command", q: "What is a limitation of tr?", choices: ["Slow for large files", "Can only translate single characters, not multi-char strings", "Requires input file", "Can't delete characters"], answer: 1, expl: "tr works character-by-character; for 'foo' → 'bar' use sed/awk" },
+
+  { type: "mc", topic: "sort-command", q: "What does sort -n do?", choices: ["Sort numeric values correctly", "Suppress output", "Sort by name", "Number the output"], answer: 0, expl: "-n enables numeric sort; '10' comes after '2', not before" },
+  { type: "command", topic: "sort-command", q: "Sort a file by the second field numerically in reverse order.", answer: ["sort -k2 -nr filename"], expl: "-k specifies key field; -n numeric; -r reverse" },
+  { type: "output", topic: "sort-command", q: "What does: sort -n <<< '10 2 30 1' output?", answer: ["1 10 2 30"], expl: "Numeric sort: 1 < 2 < 10 < 30" },
+  { type: "mc", topic: "sort-command", q: "What does -u flag do in sort?", choices: ["Sort uppercase only", "Sort and remove duplicates", "Unsorted output", "Unique lines only"], answer: 1, expl: "-u is equivalent to sort | uniq" },
+  { type: "command", topic: "sort-command", q: "Sort a CSV by the third field (comma-separated) and remove duplicates.", answer: ["sort -t',' -k3 -u filename"], expl: "-t sets field separator; -k3 sorts by third field" },
+
+  { type: "mc", topic: "uniq-command", q: "What does uniq do?", choices: ["Extract unique filenames", "Collapse adjacent duplicate lines", "Sort unique values", "Find different files"], answer: 1, expl: "uniq removes consecutive duplicate lines; input MUST be sorted first" },
+  { type: "mc", topic: "uniq-command", q: "What happens if you run uniq on unsorted input?", choices: ["Removes all duplicates", "May miss duplicates that aren't adjacent", "Works normally", "Throws an error"], answer: 1, expl: "uniq only sees ADJACENT dups; sort first for reliable dedup" },
+  { type: "command", topic: "uniq-command", q: "Count occurrences of each unique line.", answer: ["uniq -c"], expl: "-c prefixes count of occurrences" },
+  { type: "output", topic: "uniq-command", q: "After sorting, what does: uniq -d output?", answer: ["Lines that appear two or more times"], expl: "-d shows only duplicated lines" },
+  { type: "command", topic: "uniq-command", q: "Remove duplicates while preserving order.", answer: ["sort | uniq"], expl: "Sort first, then uniq collapses adjacent dups" },
+
+  { type: "mc", topic: "wc-command", q: "What does wc -l do?", choices: ["Word count", "Character count", "Line count", "List files"], answer: 2, expl: "-l counts lines; -w words; -c bytes/characters" },
+  { type: "command", topic: "wc-command", q: "Count total lines in all .txt files.", answer: ["wc -l *.txt"], expl: "wc processes multiple files and shows total" },
+  { type: "output", topic: "wc-command", q: "What does: ls | wc -l output for a directory with 10 files?", answer: ["10"], expl: "wc -l counts lines in input" },
+  { type: "mc", topic: "wc-command", q: "What does -L flag do in wc?", choices: ["Line numbers", "Length of longest line", "Lowest count", "List output"], answer: 1, expl: "-L prints length of the longest line" },
+
+  { type: "mc", topic: "tee-command", q: "What does tee do?", choices: ["Join files", "Split stream to file AND stdout", "Terminate input", "Test conditions"], answer: 1, expl: "tee writes stdin to file(s) AND passes through to stdout" },
+  { type: "command", topic: "tee-command", q: "Save command output to a file while still seeing it.", answer: ["command | tee filename"], expl: "tee splits: writes to file AND passes to stdout" },
+  { type: "mc", topic: "tee-command", q: "What does tee -a do?", choices: ["Append to file", "All output", "Archive file", "Append automatically"], answer: 0, expl: "-a appends to file instead of overwriting" },
+
+  { type: "mc", topic: "xargs-command", q: "What does xargs do?", choices: ["Archive files", "Convert stdin to command-line arguments", "Execute in parallel", "Expand variables"], answer: 1, expl: "xargs bridges tools that expect stdin vs those expecting arguments" },
+  { type: "command", topic: "xargs-command", q: "Delete all .tmp files found by find safely.", answer: ["find . -name '*.tmp' -print0 | xargs -0 rm"], expl: "-print0 and xargs -0 handle filenames with spaces" },
+  { type: "mc", topic: "xargs-command", q: "What does -I {} do in xargs?", choices: ["Ignore input", "Use {} as placeholder for each input", "Iterator function", "Input filter"], answer: 1, expl: "-I {} runs command once per input line, substituting {}" },
+  { type: "command", topic: "xargs-command", q: "Process each file with a command using xargs placeholder.", answer: ["command | xargs -I {} sh -c 'action with {}'"], expl: "-I {} allows per-line processing" },
+
+  { type: "mc", topic: "grep-command", q: "What does grep -o do?", choices: ["Output lines", "Output only matching part", "Omit matches", "Open file"], answer: 1, expl: "-o prints just the matched portion, not the full line" },
+  { type: "command", topic: "grep-command", q: "Search recursively for a pattern in all files.", answer: ["grep -r 'pattern' directory"], expl: "-r searches directory and subdirectories" },
+  { type: "output", topic: "grep-command", q: "What does: grep -c 'error' logfile output?", answer: ["Number of lines containing 'error'"], expl: "-c counts matching lines instead of printing them" },
+  { type: "mc", topic: "grep-command", q: "What does grep -v do?", choices: ["Verbose output", "Show version", "Invert match — non-matching lines", "Validate pattern"], answer: 2, expl: "-v prints lines that DON'T match the pattern" },
+
+  { type: "mc", topic: "sed-command", q: "What is sed?", choices: ["Search everything directory", "Stream editor for text transformation", "Secure delete", "Sort edit"], answer: 1, expl: "sed reads input, applies edits, writes to stdout" },
+  { type: "command", topic: "sed-command", q: "Replace all occurrences of 'old' with 'new' in a file.", answer: ["sed 's/old/new/g' filename"], expl: "'g' flag = global (all on line); without g, only first match" },
+  { type: "mc", topic: "sed-command", q: "What does sed -i do?", choices: ["Interactive mode", "Edit in-place (overwrite file)", "Insert mode", "Index search"], answer: 1, expl: "-i edits file directly; -i.bak creates backup" },
+  { type: "output", topic: "sed-command", q: "What does: echo 'hello' | sed 's/h/H/' output?", answer: ["Hello"], expl: "Substitutes first match; without 'g' flag" },
+  { type: "command", topic: "sed-command", q: "Delete all lines starting with # in a config file.", answer: ["sed '/^#/d' configfile"], expl: "/^#/d matches lines starting with # and deletes" },
+
+  { type: "mc", topic: "awk-output", q: "What is the difference between print and printf in awk?", choices: ["No difference", "printf allows format control; print adds newline automatically", "print is faster", "printf only for numbers"], answer: 1, expl: "printf doesn't add newline; use \\n explicitly" },
+  { type: "command", topic: "awk-output", q: "Format and print aligned columns using printf.", answer: ["awk '{ printf \"%-10s %8.2f\\n\", $1, $2 }' file"], expl: "%-10s left-align 10-char string; %8.2f right-align float" },
+  { type: "mc", topic: "awk-output", q: "What does OFS variable control in awk?", choices: ["Output file size", "Output field separator — inserted between fields when printing", "Output formatting", "Original file separator"], answer: 1, expl: "OFS defaults to space; used when printing comma-separated fields" },
+  { type: "command", topic: "awk-output", q: "Set output field separator to pipe and print fields.", answer: ["awk 'BEGIN { OFS=\"|\" } { print $1, $2 }' file"], expl: "BEGIN sets OFS before processing starts" },
+
+  { type: "mc", topic: "awk-pitfalls", q: "What is a common mistake with AWK quoting?", choices: ["Using single quotes", "Using double quotes around the program", "No quotes needed", "Using backticks"], answer: 1, expl: "Double quotes allow shell expansion of $1; use single quotes: awk '{ print $1 }'" },
+  { type: "mc", topic: "awk-pitfalls", q: "In awk, what does $1 represent?", choices: ["First character", "First field", "First line", "First file"], answer: 1, expl: "$1 is first field; $0 is entire line" },
+  { type: "mc", topic: "awk-pitfalls", q: "How do you concatenate strings in awk?", choices: ["$1 + $2", "Place variables next to each other", "$1 . $2", "concat($1, $2)"], answer: 1, expl: "awk concatenates by adjacency: full_name = $1 \" \" $2" },
+  { type: "mc", topic: "awk-pitfalls", q: "What does the comma do in: print $1, $2?", choices: ["Combines fields", "Inserts OFS between fields", "Separates statements", "Comments"], answer: 1, expl: "Comma tells print to use OFS; no comma concatenates without spaces" },
+  { type: "mc", topic: "awk-pitfalls", q: "What does ~ operator do in awk?", choices: ["Approximation", "Regex match against a field", "Assignment", "Negation"], answer: 1, expl: "$1 ~ /pattern/ matches if field 1 contains pattern" },
+
+  { type: "mc", topic: "control-operators", q: "What does && operator do?", choices: ["Logical AND — executes right command only if left succeeds", "Appends both commands", "Alternation", "Parallel execution"], answer: 0, expl: "Left command's exit status determines if right executes" },
+  { type: "mc", topic: "control-operators", q: "What does || operator do?", choices: ["Logical OR — executes right only if left fails", "Pipe output", "Alternation choice", "Condition"], answer: 0, expl: "Right command runs only when left has non-zero exit status" },
+  { type: "command", topic: "control-operators", q: "Create directory and enter it, or print error if it fails.", answer: ["mkdir dir && cd dir || echo 'Failed'"], expl: "&& on success; || on failure" },
+  { type: "mc", topic: "control-operators", q: "What does ; operator do?", choices: ["Conditional", "Sequential — runs next command regardless of previous result", "Pipe", "Comment"], answer: 1, expl: "; runs commands one after another unconditionally" },
+
+  { type: "mc", topic: "pipelines", q: "What is the classic pipeline pattern for word frequency?", choices: ["cat | head | tail", "tr | sort | uniq -c | sort -rn", "cut | grep | wc", "awk only"], answer: 1, expl: "Tokenize, sort, count, rank: tr -cs A-Za-z '\\n' | sort | uniq -c | sort -rn" },
+  { type: "command", topic: "pipelines", q: "Find the 5 most frequent words in a text file.", answer: ["tr -cs 'A-Za-z' '\\n' < file.txt | tr 'A-Z' 'a-z' | sort | uniq -c | sort -rn | head -5"], expl: "Multi-stage: tokenize, lowercase, count, rank, limit" },
+  { type: "command", topic: "pipelines", q: "Find top 10 IP addresses by request count from a log.", answer: ["cut -d' ' -f1 access.log | sort | uniq -c | sort -rn | head -10"], expl: "Extract, group, count, rank, limit" },
+  { type: "mc", topic: "pipelines", q: "When sorting before uniq, why is it necessary?", choices: ["For performance", "uniq only collapses ADJACENT duplicates", "To preserve order", "To save memory"], answer: 1, expl: "uniq doesn't look ahead; requires sorted input to see all dups" },
+
+  { type: "mc", topic: "process-substitution", q: "What does <(command) do?", choices: ["Input redirection", "Process substitution — presents command output as virtual file", "Pipe input", "Append output"], answer: 1, expl: "<(cmd) runs cmd and acts as file argument for tools like paste, diff" },
+  { type: "command", topic: "process-substitution", q: "Number each line of a file without creating temp file.", answer: ["paste <(seq 1 $(wc -l < file.txt)) file.txt"], expl: "<(seq ...) generates line numbers as virtual file" },
+  { type: "mc", topic: "process-substitution", q: "Which tools accept process substitution <(cmd)?", choices: ["Only awk", "paste, diff, comm, sort, and others expecting files", "Only grep", "None"], answer: 1, expl: "Tools expecting file arguments accept <(cmd) as virtual file" }
+]

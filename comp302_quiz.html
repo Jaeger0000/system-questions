@@ -1,0 +1,326 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>COMP302 Terminal Trainer</title>
+<style>
+  :root{
+    --bg:#0d1117; --panel:#161b22; --border:#30363d; --green:#3fb950;
+    --red:#f85149; --amber:#d29922; --text:#c9d1d9; --dim:#8b949e;
+    --accent:#58a6ff; --mono:'SF Mono',ui-monospace,'Cascadia Code','Fira Code',Consolas,monospace;
+  }
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--bg);color:var(--text);font-family:var(--mono);
+    line-height:1.5;padding:20px;display:flex;justify-content:center}
+  .wrap{width:100%;max-width:820px}
+  header{display:flex;justify-content:space-between;align-items:center;
+    border-bottom:1px solid var(--border);padding-bottom:12px;margin-bottom:20px;flex-wrap:wrap;gap:10px}
+  h1{font-size:18px;margin:0;color:var(--green)}
+  h1::before{content:"➜ ";color:var(--accent)}
+  .stats{font-size:13px;color:var(--dim);display:flex;gap:16px;flex-wrap:wrap}
+  .stats b{color:var(--text)}
+  .filters{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:18px}
+  .filters button{background:var(--panel);border:1px solid var(--border);color:var(--dim);
+    padding:6px 12px;border-radius:6px;cursor:pointer;font-family:var(--mono);font-size:12px}
+  .filters button.active{border-color:var(--accent);color:var(--accent)}
+  .card{background:var(--panel);border:1px solid var(--border);border-radius:10px;
+    padding:22px;margin-bottom:16px}
+  .tag{display:inline-block;font-size:11px;padding:2px 8px;border-radius:4px;
+    background:#21262d;color:var(--dim);margin-bottom:14px}
+  .topic{color:var(--amber)}
+  .qtext{font-size:15px;margin:0 0 16px;color:var(--text);white-space:pre-wrap}
+  .codeblock{background:#0d1117;border:1px solid var(--border);border-radius:6px;
+    padding:12px 14px;margin:12px 0;color:var(--green);white-space:pre-wrap;overflow-x:auto;font-size:14px}
+  input[type=text]{width:100%;background:#0d1117;border:1px solid var(--border);
+    color:var(--green);padding:12px 14px;border-radius:6px;font-family:var(--mono);font-size:14px}
+  input[type=text]:focus{outline:none;border-color:var(--accent)}
+  .input-line{display:flex;align-items:center;gap:8px}
+  .input-line::before{content:"$";color:var(--accent);font-weight:bold}
+  .choices{display:flex;flex-direction:column;gap:8px}
+  .choice{background:#0d1117;border:1px solid var(--border);padding:11px 14px;
+    border-radius:6px;cursor:pointer;text-align:left;color:var(--text);
+    font-family:var(--mono);font-size:14px;transition:.1s}
+  .choice:hover{border-color:var(--accent)}
+  .choice.correct{border-color:var(--green);background:rgba(63,185,80,.1)}
+  .choice.wrong{border-color:var(--red);background:rgba(248,81,73,.1)}
+  .flags{display:flex;flex-direction:column;gap:10px}
+  .flag-row{display:flex;gap:10px;align-items:center}
+  .flag-name{min-width:90px;color:var(--amber);font-weight:bold}
+  .flag-row input{flex:1}
+  .actions{display:flex;gap:10px;margin-top:16px;flex-wrap:wrap}
+  .btn{background:var(--accent);border:none;color:#0d1117;padding:10px 18px;
+    border-radius:6px;cursor:pointer;font-family:var(--mono);font-weight:bold;font-size:13px}
+  .btn.ghost{background:transparent;border:1px solid var(--border);color:var(--dim)}
+  .feedback{margin-top:16px;padding:14px;border-radius:6px;font-size:14px;display:none}
+  .feedback.ok{display:block;background:rgba(63,185,80,.08);border-left:3px solid var(--green)}
+  .feedback.no{display:block;background:rgba(248,81,73,.08);border-left:3px solid var(--red)}
+  .feedback .accepted{color:var(--dim);font-size:12px;margin-top:8px}
+  .feedback .expl{margin-top:10px;color:var(--text);white-space:pre-wrap}
+  .done{text-align:center;padding:40px;color:var(--dim)}
+  .done b{color:var(--green);font-size:28px;display:block;margin:10px 0}
+  kbd{background:#21262d;border:1px solid var(--border);border-radius:3px;padding:1px 5px;font-size:11px}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <h1>comp302 terminal trainer</h1>
+    <div class="stats">
+      <span>doğru: <b id="sCorrect">0</b></span>
+      <span>yanlış: <b id="sWrong">0</b></span>
+      <span>kalan: <b id="sLeft">0</b></span>
+      <span>streak: <b id="sStreak">0</b>🔥</span>
+    </div>
+  </header>
+
+  <div class="filters" id="filters"></div>
+  <div id="game"></div>
+</div>
+
+<script>
+/* ============================================================
+   SORULARI BURAYA EKLE. Her soru bir obje.
+   type alanları:
+     "command"  -> komut yaz. answer = kabul edilen cevap(lar) dizisi
+     "mc"       -> çoktan seçmeli. choices[], answer = doğru index
+     "output"   -> çıktıyı yaz. answer = kabul edilen cevap(lar)
+     "flags"    -> flag anlamları. flags = [{flag, answer:[...]}]
+   Ortak: topic, q (soru metni), code (opsiyonel kod bloğu), expl (açıklama)
+   command/output cevap eşleştirme: boşluk normalize, küçük harf, noktalama esnek.
+   Birden fazla doğru cevap için answer'ı dizi yap.
+============================================================ */
+const QUESTIONS = [
+  { type: "command", topic: "navigation", q: "Print the current working directory path.", answer: ["pwd"], expl: "pwd displays your current location in the file system" },
+  { type: "mc", topic: "navigation", q: "What does the tilde (~) symbol represent in Linux paths?", choices: ["Current directory", "Home directory of the current user", "Parent directory", "Root directory"], answer: 1, expl: "~ is a shortcut for the user's home directory" },
+  { type: "command", topic: "navigation", q: "Navigate to the parent directory of your current location.", answer: ["cd ..", "cd.."], expl: ".., is used to refer to the parent directory" },
+  { type: "output", topic: "navigation", q: "What does this command output?", code: "$ cd /tmp && pwd", answer: ["/tmp"], expl: "After changing to /tmp, pwd prints the current directory" },
+  { type: "command", topic: "navigation", q: "Change to your home directory using an absolute path.", answer: ["cd /home/username", "cd ~", "cd"], expl: "Multiple ways exist to navigate home; ~ and cd alone both work" },
+  
+  { type: "command", topic: "files", q: "List all files in the current directory, including hidden files (those starting with a dot).", answer: ["ls -a", "ls -la", "ls -al"], expl: "The -a flag shows all files including those starting with ." },
+  { type: "mc", topic: "files", q: "Which command is used to create a new empty file?", choices: ["create", "touch", "mkfile", "echo > file"], answer: 1, expl: "touch creates an empty file or updates its timestamp" },
+  { type: "command", topic: "files", q: "Create a directory structure dir1/subdir1/subdir2 in one command.", answer: ["mkdir -p dir1/subdir1/subdir2"], expl: "The -p flag creates parent directories as needed" },
+  { type: "output", topic: "files", q: "What does this command do?", code: "$ cp file1.txt file2.txt", answer: ["Copies file1.txt to a new file named file2.txt"], expl: "cp copies the source file to the destination" },
+  { type: "command", topic: "files", q: "Remove a file named 'oldfile.log' without asking for confirmation.", answer: ["rm oldfile.log"], expl: "rm removes files; use rm -i for interactive confirmation" },
+  { type: "command", topic: "files", q: "Move 'report.pdf' from the current directory to the 'Documents' subdirectory.", answer: ["mv report.pdf Documents/", "mv report.pdf Documents/report.pdf"], expl: "mv moves or renames files; last argument can be directory" },
+  { type: "flags", topic: "files", q: "Explain the common flags for the ls command.", flags: [
+    { flag: "-a", answer: ["Show all files including hidden files"] },
+    { flag: "-l", answer: ["Long format with details"] },
+    { flag: "-t", answer: ["Sort by modification time"] },
+    { flag: "-r", answer: ["Reverse sort order"] },
+    { flag: "-S", answer: ["Sort by file size"] }
+  ], expl: "Flags can be combined, e.g., ls -ltr" },
+
+  { type: "command", topic: "permissions", q: "Change file 'script.sh' to be executable by the owner.", answer: ["chmod u+x script.sh", "chmod 755 script.sh", "chmod 750 script.sh"], expl: "u+x adds execute permission for the user; 755 gives rwx for user and rx for group and others" },
+  { type: "mc", topic: "permissions", q: "In the octal permission 644, what does the first digit (6) represent?", choices: ["Group permissions", "User permissions", "Other permissions", "Total files"], answer: 1, expl: "First digit is user, second is group, third is others. 6 = rw-" },
+  { type: "output", topic: "permissions", q: "What are the permissions for a file showing -rw-r--r--?", answer: ["User: read and write; Group: read only; Others: read only"], expl: "First rwx is user, next rwx is group, last rwx is others" },
+  { type: "command", topic: "permissions", q: "Remove read permission from 'others' for the file 'config.txt'.", answer: ["chmod o-r config.txt"], expl: "o-r removes read permission from others" },
+  { type: "flags", topic: "permissions", q: "Explain the chmod symbolic format flags.", flags: [
+    { flag: "u", answer: ["User (owner)"] },
+    { flag: "g", answer: ["Group"] },
+    { flag: "o", answer: ["Others"] },
+    { flag: "a", answer: ["All (user, group, others)"] }
+  ], expl: "Combined with +, -, or = to add, remove, or set permissions" },
+
+  { type: "command", topic: "text-processing", q: "Display the first 5 lines of a file named 'large_file.txt'.", answer: ["head -5 large_file.txt", "head -n 5 large_file.txt"], expl: "head shows the beginning of a file; default is 10 lines" },
+  { type: "command", topic: "text-processing", q: "Display the last 20 lines of 'logfile.log'.", answer: ["tail -20 logfile.log", "tail -n 20 logfile.log"], expl: "tail shows the end of a file" },
+  { type: "output", topic: "text-processing", q: "What does this command output?", code: "$ grep error system.log", answer: ["All lines containing the word 'error' from system.log"], expl: "grep searches for lines matching the pattern" },
+  { type: "command", topic: "text-processing", q: "Search for the word 'ERROR' in all .log files in the current directory (case-insensitive).", answer: ["grep -i ERROR *.log", "grep -i error *.log"], expl: "The -i flag makes grep case-insensitive" },
+  { type: "mc", topic: "text-processing", q: "Which command displays file contents one page at a time and allows backward movement?", choices: ["more", "less", "cat", "head"], answer: 1, expl: "less is more powerful than more and supports backward navigation" },
+  { type: "flags", topic: "text-processing", q: "Explain common grep flags.", flags: [
+    { flag: "-i", answer: ["Case-insensitive search"] },
+    { flag: "-v", answer: ["Invert match (lines NOT matching)"] },
+    { flag: "-r", answer: ["Recursive search in directories"] },
+    { flag: "-n", answer: ["Show line numbers"] }
+  ], expl: "grep is powerful for searching text in files" },
+
+  { type: "command", topic: "archiving", q: "Create a compressed tar archive named 'backup.tar.gz' containing the 'project' directory.", answer: ["tar -czf backup.tar.gz project", "tar -czf backup.tar.gz project/"], expl: "c=create, z=gzip compression, f=file name" },
+  { type: "mc", topic: "archiving", q: "What does the 'x' flag do in a tar command?", choices: ["Compress the archive", "Extract files from archive", "List archive contents", "Create a new archive"], answer: 1, expl: "x is for extracting files; use with -f for the archive file name" },
+  { type: "output", topic: "archiving", q: "What command extracts a tar.gz file?", code: "$ tar -xzf archive.tar.gz", answer: ["Extracts all files from archive.tar.gz"], expl: "x=extract, z=gunzip, f=file" },
+  { type: "command", topic: "archiving", q: "List the contents of 'backup.tar.gz' without extracting.", answer: ["tar -tzf backup.tar.gz"], expl: "t=list/test, z=gzip, f=file name" },
+  { type: "command", topic: "archiving", q: "Compress a file 'data.txt' using gzip.", answer: ["gzip data.txt"], expl: "gzip compresses and replaces the file with data.txt.gz" },
+  { type: "flags", topic: "archiving", q: "Explain tar flags.", flags: [
+    { flag: "c", answer: ["Create a new archive"] },
+    { flag: "x", answer: ["Extract files from archive"] },
+    { flag: "f", answer: ["Specify the archive filename"] },
+    { flag: "z", answer: ["Use gzip compression"] },
+    { flag: "v", answer: ["Verbose output"] }
+  ], expl: "Common tar workflow: tar -czf name.tar.gz directory, tar -xzf name.tar.gz" },
+
+  { type: "command", topic: "processes", q: "Display all currently running processes on the system.", answer: ["ps -e", "ps -ef", "ps aux"], expl: "ps -e shows all processes; -f adds more detail" },
+  { type: "mc", topic: "processes", q: "What does a process ID (PID) represent?", choices: ["Process name", "A unique identifier for a running process", "Process priority", "Process owner"], answer: 1, expl: "Each running process has a unique PID used to identify and control it" },
+  { type: "output", topic: "processes", q: "What does this command do?", code: "$ ps -u john", answer: ["Lists all processes owned by user john"], expl: "ps -u shows processes for a specific user" },
+  { type: "command", topic: "processes", q: "Terminate a process with ID 1234 gracefully.", answer: ["kill 1234"], expl: "kill sends SIGTERM; use kill -9 for immediate termination" },
+  { type: "command", topic: "processes", q: "Force-kill a process with ID 5678 that is unresponsive.", answer: ["kill -9 5678"], expl: "kill -9 sends SIGKILL for immediate termination" },
+  { type: "mc", topic: "processes", q: "Which command displays CPU-intensive processes sorted by usage?", choices: ["ps", "top", "kill", "jobs"], answer: 1, expl: "top shows a live, sorted view of processes; similar to Windows Task Manager" },
+  { type: "flags", topic: "processes", q: "Explain ps command flags.", flags: [
+    { flag: "-e", answer: ["Show all processes"] },
+    { flag: "-f", answer: ["Full format with additional details"] },
+    { flag: "-u", answer: ["Show processes of a specific user"] },
+    { flag: "-a", answer: ["Show processes with extra information"] }
+  ], expl: "Useful for monitoring running programs on the system" },
+
+  { type: "command", topic: "environment", q: "Display the path to the current shell executable.", answer: ["echo $SHELL"], expl: "$SHELL is an environment variable storing the shell path" },
+  { type: "mc", topic: "environment", q: "What does the PATH environment variable contain?", choices: ["The user's password", "A list of directories where executable programs are found", "The current working directory", "The user's home directory"], answer: 1, expl: "PATH tells the shell where to search for commands" },
+  { type: "output", topic: "environment", q: "What does this command display?", code: "$ whoami", answer: ["The current logged-in username"], expl: "whoami identifies the current user" },
+  { type: "command", topic: "environment", q: "Display your home directory path using an environment variable.", answer: ["echo $HOME"], expl: "$HOME is an environment variable containing the home directory" },
+
+  { type: "mc", topic: "regex", q: "What does the wildcard * match in Linux filenames?", choices: ["Exactly one character", "Zero or more characters", "Any file starting with the pattern", "A regular expression"], answer: 1, expl: "* matches any number of characters; ? matches exactly one" },
+  { type: "command", topic: "regex", q: "List all files ending with '.log' in the current directory.", answer: ["ls *.log"], expl: "* matches any characters before .log" },
+  { type: "mc", topic: "regex", q: "Which wildcard pattern matches a single character?", choices: ["*", "?", "[abc]", ".*"], answer: 1, expl: "? matches exactly one character" },
+  { type: "command", topic: "regex", q: "List all files with names containing exactly one character between 'file' and '.txt'.", answer: ["ls file?.txt"], expl: "? matches a single character" },
+  { type: "command", topic: "regex", q: "List all .pdf files whose names match 'report_[0-9]*.pdf'.", answer: ["ls report_[0-9]*.pdf"], expl: "[0-9] matches a digit; * matches zero or more characters" },
+
+  { type: "command", topic: "scripting", q: "Execute a shell script file named 'backup.sh' in the current directory.", answer: ["bash backup.sh", "./backup.sh", "sh backup.sh"], expl: "Use bash/sh followed by filename, or make it executable with chmod +x and run with ./" },
+  { type: "mc", topic: "scripting", q: "What command is used to redirect standard output to a file?", choices: [">>", "|", ">", "<"], answer: 2, expl: "> overwrites; >> appends; | pipes to another command; < redirects input" },
+  { type: "output", topic: "scripting", q: "What does this command do?", code: "$ echo 'test' > output.txt", answer: ["Writes 'test' to a new file output.txt (overwrites if exists)"], expl: "> redirects stdout to a file, overwriting existing content" },
+  { type: "command", topic: "scripting", q: "Append the current date to a log file 'app.log'.", answer: ["date >> app.log"], expl: ">> appends to the file without overwriting" },
+  { type: "mc", topic: "scripting", q: "Which symbol pipes the output of one command to another?", choices: [">", "<", "|", ">>"], answer: 2, expl: "| sends stdout of left command to stdin of right command" },
+  { type: "flags", topic: "scripting", q: "Explain output redirection operators.", flags: [
+    { flag: ">", answer: ["Redirect stdout to file (overwrite)"] },
+    { flag: ">>", answer: ["Append stdout to file"] },
+    { flag: "|", answer: ["Pipe stdout to another command"] },
+    { flag: "<", answer: ["Redirect stdin from file"] }
+  ], expl: "Essential for scripting and combining commands" },
+
+  { type: "command", topic: "files", q: "Create a symbolic link named 'shortcut' pointing to 'original_file.txt'.", answer: ["ln -s original_file.txt shortcut"], expl: "ln -s creates a symbolic (soft) link without duplicating the file" },
+  { type: "mc", topic: "files", q: "What command displays extended information about a file?", choices: ["ls", "stat", "file", "info"], answer: 1, expl: "stat shows detailed file metadata like inode, timestamps, and permissions" },
+  { type: "command", topic: "files", q: "Search for all files named 'config.ini' starting from the current directory.", answer: ["find . -name config.ini", "find . -name 'config.ini'"], expl: "find searches the directory tree; . means current directory" },
+  { type: "output", topic: "files", q: "What does this command show?", code: "$ file document.pdf", answer: ["The file type or description of document.pdf"], expl: "file identifies the file type based on content, not just extension" },
+
+  { type: "command", topic: "navigation", q: "Jump back to the previous directory you were in.", answer: ["cd -"], expl: "cd - switches to the previous working directory" },
+  { type: "command", topic: "navigation", q: "List files in the parent directory without changing to it.", answer: ["ls ..", "ls -l .."], expl: ".. refers to parent directory; you can use it with any command" },
+  { type: "mc", topic: "files", q: "What is the maximum length of a filename in Linux?", choices: ["32 characters", "128 characters", "255 characters", "No fixed limit"], answer: 2, expl: "Linux limits filenames to 255 characters in most filesystems" },
+  { type: "command", topic: "files", q: "List files in /etc directory sorted by size, largest first.", answer: ["ls -lS /etc"], expl: "S flag sorts by size in descending order" },
+
+  { type: "command", topic: "text-processing", q: "Search recursively for 'TODO' in all files within the current directory and subdirectories.", answer: ["grep -r TODO .", "grep -ri todo ."], expl: "r for recursive search; i makes it case-insensitive" },
+  { type: "output", topic: "text-processing", q: "What does this command display?", code: "$ tail -f debug.log", answer: ["The last 10 lines of debug.log, updating in real-time as new lines are added"], expl: "f (follow) mode streams new appended lines; useful for monitoring logs" },
+  { type: "command", topic: "text-processing", q: "Display lines from 'data.txt' that do NOT contain the word 'error'.", answer: ["grep -v error data.txt"], expl: "v flag inverts the match to show non-matching lines" },
+
+  { type: "command", topic: "permissions", q: "Give read, write, and execute permissions to the owner, and read-only to group and others, for 'program.sh'.", answer: ["chmod 744 program.sh", "chmod u+rwx,go+r program.sh"], expl: "744 = owner rwx, group r--, others r--" },
+  { type: "mc", topic: "permissions", q: "What permission is required to list the contents of a directory with ls?", choices: ["Write permission", "Read permission", "Execute permission", "All three"], answer: 1, expl: "Read permission on a directory allows listing its contents" },
+  { type: "mc", topic: "permissions", q: "What permission is required to cd into a directory?", choices: ["Read permission", "Write permission", "Execute permission", "All three"], answer: 2, expl: "Execute permission on a directory allows entering/accessing it" },
+
+  { type: "command", topic: "processes", q: "Run a command 'backup.sh' in the background and continue using the terminal.", answer: ["./backup.sh &", "bash backup.sh &"], expl: "& at the end runs the command in the background" },
+  { type: "mc", topic: "processes", q: "Which process state means the process is waiting for input or resources?", choices: ["Running", "Ready", "Sleeping", "Terminated"], answer: 2, expl: "Sleeping state indicates a process waiting for I/O or user input" },
+  { type: "command", topic: "processes", q: "Terminate all processes with the name 'firefox'.", answer: ["killall firefox"], expl: "killall terminates all processes matching the given name" },
+  { type: "output", topic: "processes", q: "What information does ps -ef display?", answer: ["A full listing of all running processes with details like user, PID, parent PID, and command line"], expl: "ps -ef provides the most comprehensive process information" },
+
+  { type: "command", topic: "archiving", q: "Create a tar archive (without compression) named 'data.tar' from the 'mydata' directory.", answer: ["tar -cf data.tar mydata"], expl: "c=create, f=file; omit z to skip compression" },
+  { type: "output", topic: "archiving", q: "What does gzip -d accomplish?", answer: ["Decompresses a .gz file, replacing it with the uncompressed version"], expl: "d flag for decompress; bzip2 -d works similarly for .bz2 files" },
+  { type: "command", topic: "archiving", q: "List the contents of a tar archive 'archive.tar' without extracting.", answer: ["tar -tf archive.tar"], expl: "t=test/list, f=file" },
+  { type: "mc", topic: "archiving", q: "Which compression method typically achieves better compression: gzip or bzip2?", choices: ["gzip", "bzip2", "Same compression", "Depends on file type"], answer: 1, expl: "bzip2 generally achieves better compression but is slower than gzip" }
+];
+/* ====================== MOTOR (dokunma) ====================== */
+let pool=[], idx=0, correct=0, wrong=0, streak=0, filter="all";
+
+const norm = s => s.toLowerCase().trim().replace(/\s+/g," ").replace(/['"`]/g,"").replace(/\s*([|>&;])\s*/g,"$1");
+const matchAns = (val, answers) => {
+  const v = norm(val);
+  return answers.some(a => norm(a) === v);
+};
+
+function topics(){
+  const t = [...new Set(QUESTIONS.map(q=>q.topic))];
+  return ["all",...t];
+}
+function buildFilters(){
+  const f = document.getElementById("filters");
+  f.innerHTML = topics().map(t=>
+    `<button class="${t===filter?'active':''}" onclick="setFilter('${t}')">${t} ${t==='all'?'('+QUESTIONS.length+')':'('+QUESTIONS.filter(q=>q.topic===t).length+')'}</button>`
+  ).join("");
+}
+function setFilter(t){
+  filter=t; start();
+}
+function start(){
+  pool = (filter==="all"?QUESTIONS:QUESTIONS.filter(q=>q.topic===filter))
+    .map(q=>({...q})).sort(()=>Math.random()-0.5);
+  idx=0; correct=0; wrong=0; streak=0;
+  buildFilters(); updateStats(); render();
+}
+function updateStats(){
+  sCorrect.textContent=correct; sWrong.textContent=wrong;
+  sLeft.textContent=Math.max(0,pool.length-idx); sStreak.textContent=streak;
+}
+function render(){
+  const g=document.getElementById("game");
+  if(idx>=pool.length){
+    const pct = pool.length? Math.round(correct/(correct+wrong||1)*100):0;
+    g.innerHTML=`<div class="done">tamamlandı<b>${correct}/${correct+wrong} (${pct}%)</b>
+      <button class="btn" onclick="start()">tekrar başla</button></div>`;
+    return;
+  }
+  const q=pool[idx];
+  let body="";
+  if(q.type==="command"||q.type==="output"){
+    if(q.code) body+=`<div class="codeblock">${esc(q.code)}</div>`;
+    body+=`<div class="input-line"><input type="text" id="ans" autocomplete="off" autofocus
+      placeholder="${q.type==='output'?'çıktıyı yaz...':'komutu yaz...'}"
+      onkeydown="if(event.key==='Enter')check()"></div>`;
+  } else if(q.type==="mc"){
+    body+=q.code?`<div class="codeblock">${esc(q.code)}</div>`:"";
+    body+=`<div class="choices">`+q.choices.map((c,i)=>
+      `<button class="choice" data-i="${i}" onclick="pickMC(${i})">${esc(c)}</button>`).join("")+`</div>`;
+  } else if(q.type==="flags"){
+    body+=`<div class="flags">`+q.flags.map((fl,i)=>
+      `<div class="flag-row"><span class="flag-name">${esc(fl.flag)}</span>
+       <input type="text" id="fl${i}" autocomplete="off" placeholder="ne işe yarar?"></div>`).join("")+`</div>`;
+  }
+  g.innerHTML=`<div class="card">
+    <span class="tag">type: ${q.type} · <span class="topic">${q.topic}</span></span>
+    <p class="qtext">${esc(q.q)}</p>
+    ${body}
+    <div class="actions">
+      ${q.type!=='mc'?'<button class="btn" onclick="check()">kontrol et</button>':''}
+      <button class="btn ghost" onclick="skip()">geç / cevabı gör</button>
+    </div>
+    <div class="feedback" id="fb"></div>
+  </div>`;
+  const inp=document.getElementById("ans"); if(inp) inp.focus();
+  updateStats();
+}
+function esc(s){return (s||"").replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;");}
+
+function pickMC(i){
+  const q=pool[idx];
+  document.querySelectorAll(".choice").forEach(b=>b.style.pointerEvents="none");
+  const ok = i===q.answer;
+  document.querySelector(`.choice[data-i="${q.answer}"]`).classList.add("correct");
+  if(!ok) document.querySelector(`.choice[data-i="${i}"]`).classList.add("wrong");
+  finish(ok,q);
+}
+function check(){
+  const q=pool[idx];
+  let ok=false;
+  if(q.type==="command"||q.type==="output"){
+    ok=matchAns(document.getElementById("ans").value, q.answer);
+  } else if(q.type==="flags"){
+    ok=q.flags.every((fl,i)=>matchAns(document.getElementById("fl"+i).value, fl.answer));
+  }
+  finish(ok,q);
+}
+function skip(){ finish(null, pool[idx]); }
+
+function finish(ok,q){
+  const fb=document.getElementById("fb");
+  let acc="";
+  if(q.type==="command"||q.type==="output") acc=`kabul edilen: ${q.answer.join("  |  ")}`;
+  if(q.type==="flags") acc=q.flags.map(f=>`${f.flag}: ${f.answer[0]}`).join("   ");
+  if(ok===true){correct++;streak++; fb.className="feedback ok";
+    fb.innerHTML=`✓ doğru!${q.expl?`<div class="expl">${esc(q.expl)}</div>`:""}`;}
+  else if(ok===false){wrong++;streak=0; fb.className="feedback no";
+    fb.innerHTML=`✗ yanlış.<div class="accepted">${esc(acc)}</div>${q.expl?`<div class="expl">${esc(q.expl)}</div>`:""}`;}
+  else {streak=0; fb.className="feedback no";
+    fb.innerHTML=`cevap:<div class="accepted">${esc(acc)}</div>${q.expl?`<div class="expl">${esc(q.expl)}</div>`:""}`;}
+  document.querySelectorAll("input").forEach(i=>i.disabled=true);
+  const act=document.querySelector(".actions");
+  act.innerHTML=`<button class="btn" onclick="next()">sonraki →</button>`;
+  document.onkeydown=e=>{if(e.key==='Enter'){e.preventDefault();next();}};
+  updateStats();
+}
+function next(){ document.onkeydown=null; idx++; render(); }
+start();
+</script>
+</body>
+</html>

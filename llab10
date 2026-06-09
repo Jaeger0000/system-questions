@@ -1,0 +1,80 @@
+[
+  { type: "mc", topic: "regex-patterns", q: "What is the difference between * and +?", choices: ["* requires one, + requires zero", "* means zero or more, + means one or more", "No difference", "+ is newer"], answer: 1, expl: "* matches even if char never appears; + requires at least one occurrence" },
+  { type: "command", topic: "regex-patterns", q: "Find all lines matching 'a+b' (one or more a's followed by b).", answer: ["grep -E 'a+b' file.txt"], expl: "-E flag enables +; without it, grep treats + literally" },
+  { type: "command", topic: "regex-patterns", q: "Find all lines matching 'a*b' (zero or more a's followed by b).", answer: ["grep 'a*b' file.txt", "grep -E 'a*b' file.txt"], expl: "* works without -E; matches b, ab, aab, aaab, etc." },
+
+  { type: "mc", topic: "common-mistakes", q: "What does . (dot) match in regex?", choices: ["Literal period only", "Any character except newline", "Any whitespace", "End of pattern"], answer: 1, expl: "To match literal dot, use escaped \\\\." },
+  { type: "command", topic: "common-mistakes", q: "Find lines with literal 'file.txt' (not 'fileXtxt').", answer: ["grep 'file\\.txt' file.txt"], expl: "\\\\. escapes dot to match literal period" },
+  { type: "mc", topic: "common-mistakes", q: "What is the difference between [abc] and (cat|dog)?", choices: ["No difference", "[abc] matches one char, (cat|dog) matches whole words", "Same thing", "[abc] is faster"], answer: 1, expl: "[abc] = single char 'a' OR 'b' OR 'c'; (cat|dog) = word 'cat' OR word 'dog'" },
+  { type: "command", topic: "common-mistakes", q: "Find lines containing exactly 'dog' or 'cat' (not letter combinations).", answer: ["grep -E '(dog|cat)' file.txt"], expl: "Parentheses with | for word-level alternation" },
+
+  { type: "mc", topic: "anchors", q: "What does ^ anchor do?", choices: ["Escape character", "Anchor to start of line", "Power operator", "Not operator"], answer: 1, expl: "^ matches pattern only at line start" },
+  { type: "mc", topic: "anchors", q: "What does $ anchor do?", choices: ["Literal dollar", "Anchor to end of line", "Variable prefix", "Range operator"], answer: 1, expl: "$ matches pattern only at line end" },
+  { type: "command", topic: "anchors", q: "Find lines starting with 'hello' (anywhere in line is wrong).", answer: ["grep '^hello' file.txt"], expl: "^ anchors to start; without it, matches 'hello' anywhere" },
+  { type: "command", topic: "anchors", q: "Find lines ending with a digit.", answer: ["grep '[0-9]$' file.txt"], expl: "$ anchors digit to end of line" },
+  { type: "command", topic: "anchors", q: "Find exact line 'cat' (nothing before or after).", answer: ["grep '^cat$' file.txt"], expl: "^ and $ together match complete line only" },
+
+  { type: "mc", topic: "escaping", q: "What does \\\\$ match?", choices: ["End of line", "Literal dollar sign", "Variable", "Escape character"], answer: 1, expl: "Backslash escapes special meaning; \\\\$ matches literal $" },
+  { type: "command", topic: "escaping", q: "Find lines containing literal '.' or '\\\\$' characters.", answer: ["grep '\\\\$[0-9]' file.txt"], expl: "Escape both special characters" },
+  { type: "command", topic: "escaping", q: "Find lines with literal periods (like 'file.txt').", answer: ["grep '\\\\.txt' file.txt"], expl: "\\\\. escapes dot to match literal period" },
+
+  { type: "mc", topic: "grep-flags", q: "What does grep -E flag do?", choices: ["Error mode", "Enable extended regex (+, ?, |, {})", "Edit file", "Export results"], answer: 1, expl: "-E allows +, ?, |, () without needing backslashes" },
+  { type: "mc", topic: "grep-flags", q: "What does grep -i flag do?", choices: ["Input file", "Case-insensitive search", "Ignore errors", "Include hidden"], answer: 1, expl: "-i ignores uppercase/lowercase differences" },
+  { type: "mc", topic: "grep-flags", q: "What does grep -v flag do?", choices: ["Verbose", "Invert match (show non-matching lines)", "Version", "Validate"], answer: 1, expl: "-v shows lines that DON'T match pattern" },
+  { type: "mc", topic: "grep-flags", q: "What does grep -o flag do?", choices: ["Output file", "Show only matched portions (not whole line)", "Option", "Optimize"], answer: 1, expl: "-o prints ONLY the part matching pattern, not full line" },
+  { type: "mc", topic: "grep-flags", q: "What does grep -n flag do?", choices: ["No match", "Print line numbers before matches", "Numeric sort", "Name filter"], answer: 1, expl: "-n shows which line each match is on" },
+  { type: "mc", topic: "grep-flags", q: "What does grep -c flag do?", choices: ["Count matches", "Compare files", "Copy results", "Column view"], answer: 0, expl: "-c counts matching lines; outputs single number" },
+
+  { type: "command", topic: "character-classes", q: "Find lines containing only letters (no numbers or special chars).", answer: ["grep -E '^[a-zA-Z]+$' file.txt"], expl: "[a-zA-Z]+ matches one or more letters; ^ and $ ensure entire line is letters" },
+  { type: "command", topic: "character-classes", q: "Find lines starting with a digit.", answer: ["grep '^[0-9]' file.txt"], expl: "^ and [0-9] match digit at start" },
+  { type: "command", topic: "character-classes", q: "Find lines NOT containing numbers.", answer: ["grep -v '[0-9]' file.txt"], expl: "-v inverts match; shows lines without digits" },
+  { type: "command", topic: "character-classes", q: "Find lines with hexadecimal characters (0-9, a-f, A-F).", answer: ["grep -E '[0-9a-fA-F]' file.txt"], expl: "[0-9a-fA-F] matches hex digits" },
+
+  { type: "mc", topic: "quantifiers", q: "What does {3} mean in regex?", choices: ["3 or more", "Exactly 3 occurrences", "Optional 3", "Group 3"], answer: 1, expl: "{n} matches exactly n times; {n,m} for range" },
+  { type: "mc", topic: "quantifiers", q: "What does {2,5} mean in regex?", choices: ["2 or 5 only", "Between 2 and 5 times (inclusive)", "2 to 5 groups", "At least 5"], answer: 1, expl: "{n,m} matches n to m times; {2,} means 2 or more" },
+  { type: "command", topic: "quantifiers", q: "Find 3-digit numbers using {3}.", answer: ["grep -E '[0-9]{3}' file.txt"], expl: "[0-9]{3} matches exactly 3 digits" },
+  { type: "command", topic: "quantifiers", q: "Find words of exactly 4 letters.", answer: ["grep -E '^[a-zA-Z]{4}$' file.txt"], expl: "[a-zA-Z]{4} matches exactly 4 letters; anchors ensure full word" },
+
+  { type: "mc", topic: "common-mistakes", q: "Why doesn't grep work with \\\\d pattern?", choices: ["Syntax error", "\\\\d works in Perl/Python but not grep; use [0-9] instead", "Disabled feature", "Version issue"], answer: 1, expl: "[0-9] is compatible with all grep versions; \\\\d only works in PCRE" },
+  { type: "command", topic: "common-mistakes", q: "Find 3-digit numbers using grep -E (compatible approach).", answer: ["grep -E '[0-9]{3}' file.txt"], expl: "[0-9]{3} is more compatible than \\\\d{3}" },
+
+  { type: "mc", topic: "common-mistakes", q: "What is greedy matching (.*)?", choices: ["Matches as little as possible", "Matches as much as possible (default behavior)", "Slow matching", "Empty string"], answer: 1, expl: "Greedy .* captures everything until pattern can no longer match" },
+  { type: "command", topic: "pattern-matching", q: "Extract email addresses from lines using grep -E.", answer: ["grep -E '[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,}' file.txt"], expl: "Email regex: localpart@domain.extension" },
+  { type: "command", topic: "pattern-matching", q: "Find lines with URL patterns (http:// or https://).", answer: ["grep -E 'https?://' file.txt"], expl: "https? matches http or https (? makes s optional)" },
+
+  { type: "command", topic: "case-sensitivity", q: "Find all variations of 'hello' (case-insensitive).", answer: ["grep -i 'hello' file.txt"], expl: "-i ignores case; matches hello, Hello, HELLO, HeLLo" },
+  { type: "command", topic: "case-sensitivity", q: "Find 'ERROR' or 'error' or 'Error' with single command.", answer: ["grep -i 'error' file.txt"], expl: "-i flag handles all case variations" },
+
+  { type: "mc", topic: "common-mistakes", q: "In [a-z-], where should the hyphen be to match literally?", choices: ["In the middle", "At start or end to make it literal", "Escaped", "Never literal"], answer: 1, expl: "[a-z-] or [-a-z] makes hyphen literal; [a-z-x] is confusing" },
+  { type: "command", topic: "character-classes", q: "Match characters including hyphen: letters, digits, and dash.", answer: ["grep -E '[a-zA-Z0-9-]' file.txt"], expl: "Hyphen at end is treated as literal" },
+
+  { type: "mc", topic: "common-mistakes", q: "What do parentheses () do in regex?", choices: ["Group only", "Capture the match (for use in replacements or backreferences)", "Escape", "Optional"], answer: 1, expl: "() captures for use as \\\\1, \\\\2 in sed replacements" },
+  { type: "command", topic: "sed-operations", q: "Extract name from 'Name: John Doe' format using sed capture groups.", answer: ["sed -E 's/Name: (.*)/\\1/' file.txt"], expl: "() captures name; \\\\1 uses captured group in replacement" },
+
+  { type: "command", topic: "email-validation", q: "Find all valid email addresses in a file.", answer: ["grep -E '^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,}$' file.txt"], expl: "Complete email validation regex with anchors" },
+  { type: "command", topic: "email-validation", q: "Find invalid emails (missing @ or domain).", answer: ["grep -v -E '^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,}$' file.txt"], expl: "-v inverts; shows lines NOT matching valid format" },
+  { type: "command", topic: "email-validation", q: "Extract domain names from emails.", answer: ["grep -oE '@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,}' emails.txt"], expl: "-o shows only matched domain portion" },
+
+  { type: "command", topic: "log-analysis", q: "Find all ERROR or WARNING lines in a log file.", answer: ["grep -E '(ERROR|WARNING)' app.log"], expl: "Alternation with | matches either pattern" },
+  { type: "command", topic: "log-analysis", q: "Count total ERROR lines in a log file.", answer: ["grep -c ERROR app.log"], expl: "-c counts matches; outputs single number" },
+  { type: "command", topic: "log-analysis", q: "Find log entries with timestamps and show line numbers.", answer: ["grep -n -E '[0-9]{2}:[0-9]{2}:[0-9]{2}' app.log"], expl: "-n shows line numbers; -E enables pattern" },
+  { type: "command", topic: "log-analysis", q: "Extract HTTP status codes (3-digit numbers) from access logs.", answer: ["grep -oE ' [0-9]{3} ' access.log"], expl: "-o extracts status code; spaces prevent partial matches" },
+
+  { type: "command", topic: "sed-operations", q: "Replace all IP addresses with [REDACTED] in a log file.", answer: ["sed -E 's/[0-9]{1,3}\\.[0-9]{1,3}\\.[0-9]{1,3}\\.[0-9]{1,3}/[REDACTED]/g' log.txt"], expl: "IP regex matches A.B.C.D; /g replaces all" },
+  { type: "command", topic: "sed-operations", q: "Format phone numbers from XXX-XXXX to (XXX) XXXX.", answer: ["sed -E 's/([0-9]{3})-([0-9]{4})/(\\1) \\2/g' file.txt"], expl: "Capture groups \\\\1 and \\\\2 reformat phone number" },
+
+  { type: "command", topic: "awk-usage", q: "Print first and third fields from an access log.", answer: ["awk '{print $1, $3}' access.log"], expl: "awk prints specified fields; default delimiter is space" },
+  { type: "command", topic: "awk-usage", q: "Count requests per IP address from access log.", answer: ["awk '{print $1}' access.log | sort | uniq -c"], expl: "awk extracts IP → sort → uniq -c counts" },
+  { type: "command", topic: "awk-usage", q: "Find all log entries with status code 200.", answer: ["awk '$9 == 200 {print}' access.log"], expl: "awk condition filters by field value" },
+
+  { type: "output", topic: "pattern-matching", q: "What does: echo -e 'ab\\naaab\\nb' | grep -E 'a+b' output?", answer: ["ab", "aaab"], expl: "a+b matches one or more a's; 'b' alone doesn't match" },
+  { type: "output", topic: "pattern-matching", q: "What does: echo -e 'cat\\ndog\\ncart' | grep '[cd]' output?", answer: ["cat", "dog", "cart"], expl: "[cd] matches single char c or d; all lines contain one" },
+  { type: "output", topic: "pattern-matching", q: "What does: echo 'hello HELLO' | grep -i 'hello' output?", answer: ["hello HELLO"], expl: "-i case-insensitive; matches both instances" },
+  { type: "output", topic: "regex-patterns", q: "What does: grep '^[0-9]' file.txt output?", answer: ["All lines starting with a digit"], expl: "^ anchors to start; [0-9] matches any digit" },
+  { type: "output", topic: "grep-flags", q: "What does: grep -o '[0-9]{3}' file.txt output?", answer: ["Each 3-digit sequence on separate line"], expl: "-o shows only matched portions; one per line" },
+
+  { type: "mc", topic: "common-mistakes", q: "What is the problem with a* matching?", choices: ["Too slow", "Matches zero occurrences too (even when none present)", "Requires escaping", "Backwards"], answer: 1, expl: "a* can match empty string; use anchors to prevent unwanted matches" },
+  { type: "mc", topic: "common-mistakes", q: "When should you use grep -E instead of grep?", choices: ["Always", "Never", "When using +, ?, |, (), {} quantifiers", "For performance"], answer: 2, expl: "-E enables extended regex syntax; without it, these need backslashes" },
+  { type: "command", topic: "pattern-matching", q: "Find all words with exactly 3 letters.", answer: ["grep -E '^[a-zA-Z]{3}$' file.txt"], expl: "^ and $ anchor whole word; {3} requires exactly 3 letters" },
+  { type: "command", topic: "pattern-matching", q: "Find lines with numbers 100-999 (3-digit numbers).", answer: ["grep -E '[0-9]{3}' file.txt"], expl: "[0-9]{3} matches exactly 3 consecutive digits" }
+]

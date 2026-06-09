@@ -1,0 +1,87 @@
+[
+  { type: "mc", topic: "networking", q: "What is the primary purpose of the OSI model?", choices: ["Optimize Internet speed", "Provide a framework for understanding network communication in seven layers", "Encrypt all data", "Replace TCP/IP"], answer: 1, expl: "OSI model organizes network functions into 7 layers: Physical, Data Link, Network, Transport, Session, Presentation, Application" },
+  { type: "mc", topic: "protocols", q: "What is the main difference between TCP and UDP?", choices: ["TCP is faster", "TCP is connection-oriented and reliable; UDP is connectionless and best-effort", "UDP uses encryption", "TCP only works on local networks"], answer: 1, expl: "TCP guarantees delivery and ordering via handshake; UDP sends datagrams without connection setup" },
+  { type: "mc", topic: "protocols", q: "Which protocol operates at Layer 3 (Network Layer)?", choices: ["TCP", "IP", "Ethernet", "DNS"], answer: 1, expl: "IP (IPv4, IPv6) routes packets at Layer 3; TCP is Layer 4" },
+  { type: "mc", topic: "protocols", q: "What is the purpose of DNS?", choices: ["Encrypt connections", "Resolve hostnames to IP addresses", "Route packets", "Manage firewall rules"], answer: 1, expl: "DNS translates human-readable domain names (google.com) to IP addresses" },
+
+  { type: "mc", topic: "ip-addressing", q: "What is the CIDR notation /24?", choices: ["24 bits for host, 8 bits for network", "8 bits for host, 24 bits for network", "24 Mbps speed", "Class 24 addressing"], answer: 1, expl: "/24 means first 24 bits are network; 8 bits for hosts = 256 addresses" },
+  { type: "mc", topic: "ip-addressing", q: "Which private IP range is used for home networks?", choices: ["10.0.0.0/8", "172.16.0.0/12", "192.168.0.0/16", "All are private"], answer: 3, expl: "All three are RFC 1918 private ranges; 192.168.0.0/16 is most common in homes" },
+  { type: "command", topic: "ip-addressing", q: "Assign the IP address 192.168.1.50/24 to interface eth0.", answer: ["ip addr add 192.168.1.50/24 dev eth0", "sudo ip addr add 192.168.1.50/24 dev eth0"], expl: "ip addr add assigns address to interface; /24 is subnet mask" },
+
+  { type: "mc", topic: "interfaces", q: "What does 'ip link show' display?", choices: ["IP addresses", "Network interfaces and their status", "Routing table", "DNS servers"], answer: 1, expl: "ip link show lists all interfaces (eth0, lo, etc.) with MAC addresses and status" },
+  { type: "command", topic: "interfaces", q: "Bring network interface eth0 down (disable it).", answer: ["ip link set eth0 down", "sudo ip link set eth0 down"], expl: "ip link set <name> down disables an interface" },
+  { type: "command", topic: "interfaces", q: "Display all IP addresses currently assigned on the system.", answer: ["ip addr show", "ip addr", "ifconfig", "ifconfig -a"], expl: "ip addr show displays all configured IP addresses" },
+  { type: "output", topic: "interfaces", q: "What does: ip link set eth0 mtu 9000 do?", answer: ["Sets Maximum Transmission Unit to 9000 bytes for jumbo frames"], expl: "MTU 9000 enables jumbo frames for higher throughput on compatible networks" },
+
+  { type: "mc", topic: "connectivity", q: "What does ping do?", choices: ["Send data over TCP", "Send ICMP Echo requests to test reachability", "Display IP configuration", "Check DNS"], answer: 1, expl: "ping sends ICMP Echo packets and measures round-trip time (RTT)" },
+  { type: "command", topic: "connectivity", q: "Send exactly 4 ping packets to 8.8.8.8 and stop.", answer: ["ping -c 4 8.8.8.8"], expl: "-c flag specifies packet count" },
+  { type: "command", topic: "connectivity", q: "Trace the network path to google.com and show only router IP addresses (skip DNS resolution).", answer: ["traceroute -n google.com"], expl: "-n skips reverse DNS lookups, showing numeric IP addresses" },
+  { type: "mc", topic: "connectivity", q: "What is the primary purpose of traceroute?", choices: ["Show latency only", "Reveal every router hop between your host and destination", "Block IP addresses", "Measure bandwidth"], answer: 1, expl: "traceroute uses TTL expiration to discover each hop to the target" },
+
+  { type: "mc", topic: "dns", q: "What does 'dig' stand for?", choices: ["Domain IP Getter", "Domain Information Groper", "Digital Internet Gateway", "Direct IP Grabber"], answer: 1, expl: "dig queries DNS servers and returns detailed, machine-parseable results" },
+  { type: "command", topic: "dns", q: "Use dig to find the A record for example.com.", answer: ["dig example.com", "dig example.com A"], expl: "dig queries A record by default; equivalent to dig example.com A" },
+  { type: "command", topic: "dns", q: "Find the MX (mail server) records for gmail.com.", answer: ["dig gmail.com MX", "dig -t MX gmail.com"], expl: "-t MX or just specify MX as type to query mail servers" },
+  { type: "command", topic: "dns", q: "Perform a reverse DNS lookup on IP address 8.8.8.8.", answer: ["dig -x 8.8.8.8"], expl: "-x flag performs reverse DNS (PTR record) lookup" },
+  { type: "command", topic: "dns", q: "Query DNS server 1.1.1.1 for the A record of google.com.", answer: ["dig @1.1.1.1 google.com"], expl: "@server specifies which DNS resolver to query" },
+  { type: "mc", topic: "dns", q: "What is the purpose of /etc/resolv.conf?", choices: ["Store firewall rules", "List configured DNS servers", "Cache DNS records", "Store SSL certificates"], answer: 1, expl: "/etc/resolv.conf contains nameserver addresses used by the system" },
+
+  { type: "mc", topic: "ports", q: "What does 'ss' command do?", choices: ["Show system statistics", "Display sockets and their state", "Start SSH", "Show security settings"], answer: 1, expl: "ss (Socket Statistics) is the modern replacement for netstat" },
+  { type: "command", topic: "ports", q: "Show all listening TCP ports with the process name that is listening.", answer: ["ss -tlnp", "ss -tlp"], expl: "-t TCP, -l listening, -n numeric, -p process name" },
+  { type: "command", topic: "ports", q: "Display only established TCP connections.", answer: ["ss -tnp state established"], expl: "state filter shows connections in ESTABLISHED state" },
+  { type: "mc", topic: "ports", q: "What does 'netstat -r' show?", choices: ["Running processes", "Routing table", "Reading sockets", "Remote connections"], answer: 1, expl: "netstat -r displays the kernel routing table (legacy tool)" },
+  { type: "output", topic: "ports", q: "What does: ss -tlnp | grep :22 output?", answer: ["SSH service listening on port 22 with PID"], expl: "Filters to show only port 22 (SSH) from listening sockets" },
+
+  { type: "mc", topic: "packet-capture", q: "What does tcpdump do?", choices: ["Dump TCP data", "Capture raw network packets at kernel level", "Test network speed", "Diagnose DNS"], answer: 1, expl: "tcpdump captures packets for deep inspection and analysis" },
+  { type: "command", topic: "packet-capture", q: "Capture packets on interface eth0 with numeric output (no DNS resolution).", answer: ["tcpdump -i eth0 -n"], expl: "-i specifies interface, -n disables DNS lookups" },
+  { type: "command", topic: "packet-capture", q: "Capture all TCP traffic on port 443 and save to a file called capture.pcap.", answer: ["tcpdump -i any -w capture.pcap tcp port 443"], expl: "-w writes to PCAP file; 'any' captures on all interfaces" },
+  { type: "command", topic: "packet-capture", q: "Capture HTTP traffic and print payload as ASCII.", answer: ["tcpdump -i eth0 -A port 80"], expl: "-A prints payload in ASCII; port 80 is HTTP" },
+  { type: "mc", topic: "packet-capture", q: "What does tcpdump -s 0 do?", choices: ["Skip capture", "Capture full packets (0 = unlimited)", "Capture only first 0 bytes", "Stop after snapshot"], answer: 1, expl: "-s 0 captures entire packet; default is 65535 bytes" },
+
+  { type: "mc", topic: "ssh", q: "What does SSH do?", choices: ["Simple Shell Help", "Secure Shell for encrypted remote access", "System Shell", "Service Handler"], answer: 1, expl: "SSH provides encrypted remote terminal, file transfer, and port forwarding" },
+  { type: "command", topic: "ssh", q: "Connect to a remote host alice@server.com on port 2222.", answer: ["ssh -p 2222 alice@server.com"], expl: "-p specifies non-default port" },
+  { type: "command", topic: "ssh", q: "Generate an ED25519 SSH key pair.", answer: ["ssh-keygen -t ed25519"], expl: "ED25519 is modern and preferred over RSA" },
+  { type: "command", topic: "ssh", q: "Install your public SSH key on a remote host for key-based authentication.", answer: ["ssh-copy-id user@hostname"], expl: "ssh-copy-id copies your public key to authorized_keys on remote host" },
+  { type: "command", topic: "ssh", q: "Set up local port forwarding to access a remote service: forward local port 8080 to remote host's port 80.", answer: ["ssh -L 8080:localhost:80 user@remote"], expl: "-L local:remote forwards local port to remote service" },
+
+  { type: "mc", topic: "file-transfer", q: "What does scp do?", choices: ["Send Control Protocol", "Secure Copy files over SSH", "System Crash Protocol", "Stop Copy"], answer: 1, expl: "scp copies files between hosts using SSH encryption" },
+  { type: "command", topic: "file-transfer", q: "Copy a local file to a remote host.", answer: ["scp file.txt user@host:/remote/path/"], expl: "scp syntax: source destination; remote syntax is user@host:path" },
+  { type: "command", topic: "file-transfer", q: "Download a file from remote host to local directory.", answer: ["scp user@host:/remote/file.txt ./"], expl: "scp direction: user@host:remote-path local-path downloads" },
+  { type: "command", topic: "file-transfer", q: "Synchronize a directory recursively to remote host using rsync with compression.", answer: ["rsync -avz ./src/ user@host:/dest/"], expl: "-a archive, -v verbose, -z compress in transit" },
+  { type: "mc", topic: "file-transfer", q: "What is the advantage of rsync over scp?", choices: ["Faster protocol", "Transfers only differences (delta algorithm)", "Supports more file types", "Better encryption"], answer: 1, expl: "rsync uses delta sync; only changed portions are transferred" },
+
+  { type: "mc", topic: "http-tools", q: "What does 'curl' do?", choices: ["Curl network cables", "Fetch URLs and display content", "Create URLs", "Clear URLs"], answer: 1, expl: "curl is an HTTP client tool for REST APIs and web requests" },
+  { type: "command", topic: "http-tools", q: "Fetch a URL and display only HTTP response headers.", answer: ["curl -I https://example.com", "curl --head https://example.com"], expl: "-I shows headers only without body" },
+  { type: "command", topic: "http-tools", q: "Make a POST request with JSON data to an API endpoint.", answer: ["curl -X POST -d '{\"key\":\"value\"}' -H 'Content-Type: application/json' https://api.example.com"], expl: "-X POST, -d data, -H header" },
+  { type: "command", topic: "http-tools", q: "Download a file from a URL.", answer: ["wget https://example.com/file.iso", "curl -o file.iso https://example.com/file.iso"], expl: "wget or curl -o can download files" },
+
+  { type: "mc", topic: "firewalls", q: "What does iptables do?", choices: ["List tables", "Manage Linux firewall rules via Netfilter", "Configure routing", "Manage IP tables"], answer: 1, expl: "iptables allows/blocks packets based on rules organized in chains" },
+  { type: "command", topic: "firewalls", q: "Allow SSH traffic (port 22) to the INPUT chain using iptables.", answer: ["iptables -A INPUT -p tcp --dport 22 -j ACCEPT"], expl: "-A append, -p protocol, --dport destination port, -j jump/action" },
+  { type: "command", topic: "firewalls", q: "Set the default INPUT policy to DROP (deny all inbound).", answer: ["iptables -P INPUT DROP"], expl: "-P sets default policy (ACCEPT/DROP) for a chain" },
+  { type: "command", topic: "firewalls", q: "Allow established and related connections in iptables.", answer: ["iptables -A INPUT -m state --state ESTABLISHED,RELATED -j ACCEPT"], expl: "-m state for stateful filtering of ongoing connections" },
+  { type: "mc", topic: "firewalls", q: "What is nftables?", choices: ["Firewall for networks", "Modern replacement for iptables with cleaner syntax", "Network file tables", "NFT security"], answer: 1, expl: "nftables is the modern, unified firewall replacement for iptables" },
+  { type: "mc", topic: "firewalls", q: "What does 'ufw' stand for?", choices: ["Ultra Firewall", "Uncomplicated Firewall", "User Firewall", "Unified Firewall"], answer: 1, expl: "ufw is a user-friendly frontend to iptables (common on Ubuntu)" },
+  { type: "command", topic: "firewalls", q: "Allow TCP port 80 using ufw.", answer: ["ufw allow 80/tcp"], expl: "ufw allow port/protocol syntax" },
+
+  { type: "mc", topic: "port-scanning", q: "What does nmap do?", choices: ["Map networks", "Scan ports and detect services", "Monitor maps", "Manage ports"], answer: 1, expl: "nmap performs port scans, service detection, and OS fingerprinting" },
+  { type: "command", topic: "port-scanning", q: "Scan the top 1000 TCP ports on 192.168.1.1 with service detection.", answer: ["nmap -sV 192.168.1.1"], expl: "-sV enables service version detection" },
+  { type: "command", topic: "port-scanning", q: "Scan all 65535 ports on a host.", answer: ["nmap -p- 192.168.1.1"], expl: "-p- scans all ports from 1 to 65535" },
+  { type: "command", topic: "port-scanning", q: "Perform a ping sweep to discover live hosts on 192.168.1.0/24 network.", answer: ["nmap -sn 192.168.1.0/24"], expl: "-sn does ping scan without port scanning" },
+  { type: "mc", topic: "port-scanning", q: "What does nmap -sS do?", choices: ["Server scan", "SYN scan (stealthy, requires root)", "Service scan", "Slow scan"], answer: 1, expl: "-sS sends TCP SYN packets; less logging than full connect" },
+
+  { type: "mc", topic: "routing", q: "What is the purpose of the routing table?", choices: ["Store usernames", "Direct packets to correct destination network", "Cache DNS", "Manage passwords"], answer: 1, expl: "Routing table contains routes that determine where packets go" },
+  { type: "command", topic: "routing", q: "Display the system routing table.", answer: ["ip route show", "route -n", "netstat -r"], expl: "ip route show is the modern way to view routes" },
+  { type: "command", topic: "routing", q: "Add a default gateway 192.168.1.1 using the ip command.", answer: ["ip route add default via 192.168.1.1"], expl: "default route directs packets with no specific route match" },
+  { type: "command", topic: "routing", q: "Add a static route to network 10.0.0.0/8 via gateway 192.168.1.254.", answer: ["ip route add 10.0.0.0/8 via 192.168.1.254"], expl: "Static routes direct specific networks through particular gateways" },
+
+  { type: "mc", topic: "arp", q: "What does ARP (Address Resolution Protocol) do?", choices: ["Authenticate requests", "Resolve IP addresses to MAC addresses", "Analyze routing packets", "Archive records"], answer: 1, expl: "ARP maps Layer 3 IP addresses to Layer 2 MAC addresses" },
+  { type: "command", topic: "arp", q: "Display the ARP cache (neighbor table).", answer: ["ip neigh show", "arp -a"], expl: "ip neigh show displays ARP entries (modern); arp -a is legacy" },
+  { type: "mc", topic: "arp", q: "Why is ARP spoofing a security concern?", choices: ["Slow performance", "Attacker can map themselves to another's IP", "Uses too much bandwidth", "Breaks DNS"], answer: 1, expl: "ARP spoofing allows attackers to redirect traffic by forging ARP replies" },
+
+  { type: "mc", topic: "networking", q: "What is a network namespace?", choices: ["DNS namespace", "Isolated network stack with own interfaces and routes", "Virtual machine", "Firewall rule"], answer: 1, expl: "Network namespaces allow isolated network environments (foundation of containers)" },
+  { type: "command", topic: "networking", q: "List all network namespaces on the system.", answer: ["ip netns list"], expl: "ip netns list shows all namespace names" },
+  { type: "command", topic: "networking", q: "Create a new network namespace called 'test_ns'.", answer: ["ip netns add test_ns"], expl: "ip netns add creates a namespace" },
+
+  { type: "mc", topic: "networking", q: "What is VoIP best suited for - TCP or UDP?", choices: ["TCP (reliable)", "UDP (low latency)", "Both equally", "Neither"], answer: 1, expl: "VoIP uses UDP for real-time communication; some packet loss acceptable" },
+  { type: "mc", topic: "networking", q: "Which layer handles MAC addresses?", choices: ["Layer 3 (Network)", "Layer 2 (Data Link)", "Layer 4 (Transport)", "Layer 7 (Application)"], answer: 1, expl: "Layer 2 (Data Link) uses MAC addresses for local network communication" },
+  { type: "mc", topic: "networking", q: "What does TTL (Time To Live) do?", choices: ["Track transfer time", "Limit hop count - prevent infinite loops", "Transfer large files", "Timeout length"], answer: 1, expl: "TTL decrements at each router; packet discarded at TTL=0 (prevents loops)" }
+]

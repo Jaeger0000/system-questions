@@ -1,0 +1,89 @@
+[
+  { type: "mc", topic: "ssh", q: "What is the primary purpose of SSH?", choices: ["Simple Shell", "Secure Shell for encrypted remote access", "System Handler", "Service Help"], answer: 1, expl: "SSH provides encrypted connection to remote systems; commands and data are fully encrypted" },
+  { type: "command", topic: "ssh", q: "Connect to a remote server at 192.168.1.10 on port 2222 as user 'student01'.", answer: ["ssh student01@192.168.1.10 -p 2222"], expl: "-p specifies non-default port" },
+  { type: "mc", topic: "ssh", q: "What does the host key fingerprint warning mean when connecting for the first time?", choices: ["Connection is unsafe", "Server sends identity verification; you should verify the fingerprint is correct", "Your key is compromised", "Port is wrong"], answer: 1, expl: "First-time SSH shows fingerprint so you can verify reaching the correct server; saved to ~/.ssh/known_hosts" },
+  { type: "command", topic: "ssh", q: "Type 'yes' to accept the host key and connect to a server.", answer: ["yes"], expl: "When SSH asks 'Are you sure you want to continue connecting?', type yes to trust and save fingerprint" },
+
+  { type: "mc", topic: "key-generation", q: "What does ssh-keygen -t ed25519 do?", choices: ["Edit keys", "Generate ED25519 key pair (private + public key)", "Encrypt existing key", "Erase keys"], answer: 1, expl: "ssh-keygen creates two files: id_ed25519 (private, keep secret) and id_ed25519.pub (public, share with servers)" },
+  { type: "command", topic: "key-generation", q: "Generate an ED25519 SSH key pair with a comment.", answer: ["ssh-keygen -t ed25519 -C 'comment'"], expl: "-C adds a comment to identify the key" },
+  { type: "mc", topic: "key-generation", q: "What file permissions must a private SSH key have?", choices: ["777 (readable by all)", "600 (owner read/write only)", "755 (executable)", "644 (world-readable)"], answer: 1, expl: "SSH refuses to use key if permissions > 600; error: 'UNPROTECTED PRIVATE KEY FILE'" },
+  { type: "command", topic: "key-generation", q: "Set the correct permissions for your private SSH key.", answer: ["chmod 600 ~/.ssh/id_ed25519"], expl: "600 = rw------- (owner can read and write; nobody else can access)" },
+  { type: "command", topic: "key-generation", q: "Set the correct permissions for the .ssh directory.", answer: ["chmod 700 ~/.ssh/"], expl: "700 = rwx------ (owner only; others cannot list or access)" },
+
+  { type: "mc", topic: "key-generation", q: "What is the difference between private and public SSH keys?", choices: ["Both are the same", "Private key decrypts challenges; public key is installed on servers", "Public is secret", "Private is shared"], answer: 1, expl: "Private key stays on your machine and proves identity; public key goes on servers in authorized_keys" },
+  { type: "command", topic: "key-generation", q: "Display your public SSH key.", answer: ["cat ~/.ssh/id_ed25519.pub"], expl: "Public key starts with 'ssh-ed25519 AAAA...'; safe to share" },
+
+  { type: "mc", topic: "remote-access", q: "What does ssh-copy-id do?", choices: ["Copy files", "Append public key to server's authorized_keys for passwordless login", "Copy SSH daemon", "Create ssh connection"], answer: 1, expl: "ssh-copy-id installs your public key on remote server; next login requires no password" },
+  { type: "command", topic: "remote-access", q: "Install your public SSH key on a remote server on port 2222.", answer: ["ssh-copy-id -i ~/.ssh/id_ed25519.pub -p 2222 user@server"], expl: "-i specifies key file, -p specifies port" },
+  { type: "command", topic: "remote-access", q: "Connect to a server without opening an interactive shell, just run one command.", answer: ["ssh user@host 'command'"], expl: "SSH executes command and returns; no interactive shell opens" },
+  { type: "mc", topic: "remote-access", q: "What output should you see when first connecting without a password?", choices: ["Password prompt", "Immediate connection (no password prompt)", "Key error", "Fingerprint warning"], answer: 1, expl: "After ssh-copy-id, server recognizes your public key and grants access without asking for password" },
+
+  { type: "mc", topic: "file-transfer", q: "What does scp -P 2222 do?", choices: ["Secure copy to port 22 only", "Secure copy using capital -P to specify port (different from ssh -p)", "Skip compression", "Search copy"], answer: 1, expl: "scp uses -P (capital P) for port; ssh uses -p (lowercase p) — common mistake" },
+  { type: "command", topic: "file-transfer", q: "Upload a local file 'local.txt' to remote server's home directory using scp on port 2222.", answer: ["scp -P 2222 local.txt user@server:~/"], expl: "scp syntax: scp -P port localfile user@host:remote_path" },
+  { type: "command", topic: "file-transfer", q: "Download a file 'remote.txt' from server home directory to local current directory.", answer: ["scp -P 2222 user@server:~/remote.txt ./"], expl: "scp direction: user@host:path to local_path downloads" },
+  { type: "command", topic: "file-transfer", q: "Upload an entire directory recursively to remote server.", answer: ["scp -r -P 2222 mydir/ user@server:~/mydir/"], expl: "-r flag enables recursive directory copying" },
+
+  { type: "mc", topic: "file-transfer", q: "What is the difference between scp and sftp?", choices: ["No difference", "scp is one-shot command; sftp opens interactive session", "sftp is faster", "scp handles directories only"], answer: 1, expl: "scp: single command copy; sftp: interactive shell with ls, get, put, mkdir, etc." },
+  { type: "command", topic: "file-transfer", q: "Open an interactive SFTP session on port 2222.", answer: ["sftp -P 2222 user@server"], expl: "sftp opens interactive prompt where you type commands like ls, get, put" },
+  { type: "mc", topic: "file-transfer", q: "Inside sftp, what command downloads a file?", choices: ["put", "get", "copy", "download"], answer: 1, expl: "In sftp: get = download from server, put = upload to server" },
+  { type: "mc", topic: "file-transfer", q: "Inside sftp, what command uploads a file?", choices: ["get", "put", "send", "upload"], answer: 1, expl: "put uploads local files to remote server during SFTP session" },
+
+  { type: "mc", topic: "port-forwarding", q: "What does SSH port forwarding do?", choices: ["Close ports", "Create encrypted tunnel between local and remote port", "Forward packets", "Port scanning"], answer: 1, expl: "Port forwarding: traffic sent to localhost:PORT1 tunnels through SSH to server:PORT2" },
+  { type: "command", topic: "port-forwarding", q: "Create local port forward: map local port 8888 to remote server port 9000.", answer: ["ssh -L 8888:localhost:9000 user@server -N"], expl: "-L local_port:target:target_port; -N no shell, tunnel only" },
+  { type: "mc", topic: "port-forwarding", q: "What does the -N flag in SSH port forwarding mean?", choices: ["No connection", "No interactive shell; tunnel only (useful for background tunnels)", "Network", "Numeric"], answer: 1, expl: "-N prevents opening a shell; used with & to run tunnel in background" },
+
+  { type: "mc", topic: "ssh", q: "What does the ~/.ssh/config file do?", choices: ["Configure permissions", "Save SSH connection shortcuts (aliases) for servers", "Store passwords", "SSH configuration globally"], answer: 1, expl: "~/.ssh/config defines Host blocks; lets you type 'ssh labserver' instead of full command" },
+  { type: "command", topic: "ssh", q: "Create an SSH config entry called 'myserver' for user 'alice' at 192.168.1.5 on port 2222.", answer: ["nano ~/.ssh/config"], expl: "Edit config to add Host myserver block with HostName, User, Port, IdentityFile" },
+  { type: "command", topic: "ssh", q: "Set permissions on SSH config file to owner read/write only.", answer: ["chmod 600 ~/.ssh/config"], expl: "SSH requires config to be readable only by owner" },
+  { type: "mc", topic: "ssh", q: "After defining 'Host labserver' in ~/.ssh/config, how do you connect?", choices: ["ssh 192.168.1.10 -p 2222", "ssh labserver", "ssh user@labserver", "ssh -config labserver"], answer: 1, expl: "After config entry, just type 'ssh labserver' — SSH reads aliases from config" },
+
+  { type: "command", topic: "ssh", q: "Run a remote command on server using SSH without opening a shell.", answer: ["ssh user@server 'command'"], expl: "SSH executes single command and exits; useful for automation" },
+  { type: "command", topic: "ssh", q: "Show verbose SSH connection details including key exchange and authentication.", answer: ["ssh -v user@server"], expl: "-v enables verbose mode; shows handshake details" },
+
+  { type: "mc", topic: "environment-variables", q: "What does 'export VAR=value' do?", choices: ["Output value", "Set and export variable to environment", "Execute variable", "Copy variable"], answer: 1, expl: "export makes variable available to child processes and scripts" },
+  { type: "command", topic: "environment-variables", q: "Set environment variable STUDENT_NAME to 'Alice'.", answer: ["export STUDENT_NAME='Alice'"], expl: "export VAR='value' makes variable accessible in shell and scripts" },
+  { type: "command", topic: "environment-variables", q: "Display the value of an environment variable.", answer: ["echo $STUDENT_NAME"], expl: "$VARIABLE expands to its value" },
+  { type: "command", topic: "environment-variables", q: "List all environment variables containing 'PATH'.", answer: ["printenv | grep PATH"], expl: "printenv lists env vars; pipe to grep for filtering" },
+  { type: "command", topic: "environment-variables", q: "Make environment variables persist across logins by editing .bashrc.", answer: ["nano ~/.bashrc"], expl: "Add 'export VAR=value' lines to end of ~/.bashrc; apply with source ~/.bashrc" },
+  { type: "command", topic: "environment-variables", q: "Apply changes to .bashrc in current session without logging out.", answer: ["source ~/.bashrc"], expl: "source executes file in current shell; reloads environment variables" },
+
+  { type: "mc", topic: "file-operations", q: "What does cp command do?", choices: ["Change path", "Copy file or directory", "Compare files", "Compress"], answer: 1, expl: "cp copies files; cp -r copies directories recursively" },
+  { type: "command", topic: "file-operations", q: "Copy file 'settings.cfg' to directory 'backup'.", answer: ["cp settings.cfg backup/"], expl: "cp source dest; trailing slash on dest means copy into directory" },
+  { type: "mc", topic: "file-operations", q: "What does mv command do?", choices: ["Move view", "Move/rename files or directories", "Multiple variables", "Make visible"], answer: 1, expl: "mv moves files; same directory = rename; different directory = move" },
+  { type: "command", topic: "file-operations", q: "Move file 'notes.txt' from 'data' folder to 'reports' folder.", answer: ["mv data/notes.txt reports/"], expl: "mv source dest; if dest is directory, file moves into it" },
+  { type: "command", topic: "file-operations", q: "Create nested directories 'archive/2024/data' all at once.", answer: ["mkdir -p archive/2024/data"], expl: "-p flag creates parent directories as needed" },
+
+  { type: "mc", topic: "text-processing", q: "What does grep command do?", choices: ["Group", "Search for lines matching a pattern", "Grab", "Group replace"], answer: 1, expl: "grep filters lines containing a pattern; case-sensitive by default" },
+  { type: "command", topic: "text-processing", q: "Find all lines containing 'ERROR' in a file 'log.txt'.", answer: ["grep ERROR log.txt"], expl: "grep pattern file prints matching lines" },
+  { type: "command", topic: "text-processing", q: "Count how many lines contain 'ERROR' in 'log.txt'.", answer: ["grep -c ERROR log.txt"], expl: "-c flag counts matching lines instead of printing them" },
+  { type: "mc", topic: "text-processing", q: "What does wc command do?", choices: ["World characters", "Count words, lines, characters in files", "Write count", "Weighted characters"], answer: 1, expl: "wc -l lines, -w words, -c characters (or default all three)" },
+  { type: "command", topic: "text-processing", q: "Count total lines in a file 'employees.txt'.", answer: ["wc -l employees.txt", "cat employees.txt | wc -l"], expl: "-l counts lines" },
+  { type: "command", topic: "text-processing", q: "Count words in file 'document.txt'.", answer: ["wc -w document.txt"], expl: "-w counts words" },
+
+  { type: "mc", topic: "text-processing", q: "What does head command do?", choices: ["Go to top", "Display first N lines of file", "Heading", "Header"], answer: 1, expl: "head -n N file shows first N lines; default 10" },
+  { type: "command", topic: "text-processing", q: "Display the first 5 lines of 'data.txt'.", answer: ["head -5 data.txt"], expl: "head -N shows first N lines" },
+  { type: "mc", topic: "text-processing", q: "What does tail command do?", choices: ["File ending", "Display last N lines of file", "Tailing", "Total"], answer: 1, expl: "tail -n N file shows last N lines; default 10" },
+  { type: "command", topic: "text-processing", q: "Display the last line of 'log.txt'.", answer: ["tail -1 log.txt", "tail -n 1 log.txt"], expl: "-1 or -n 1 shows only last line" },
+
+  { type: "mc", topic: "text-processing", q: "What does sort command do?", choices: ["Display sorted", "Sort lines alphabetically or numerically", "Storage", "Source"], answer: 1, expl: "sort arranges lines; -n numeric, -r reverse" },
+  { type: "command", topic: "text-processing", q: "Sort lines in 'names.txt' alphabetically.", answer: ["sort names.txt"], expl: "sort default is alphabetic ascending" },
+  { type: "command", topic: "text-processing", q: "Sort lines numerically in descending order.", answer: ["sort -rn filename"], expl: "-rn reverse numeric (largest first)" },
+
+  { type: "mc", topic: "text-processing", q: "What does cut command do?", choices: ["Cut file", "Extract columns/fields from lines", "Cutting", "Cut size"], answer: 1, expl: "cut extracts specific columns; -d delimiter, -f field number" },
+  { type: "command", topic: "text-processing", q: "Extract the first field (column) from CSV file using comma delimiter.", answer: ["cut -d, -f1 file.csv"], expl: "-d, sets delimiter to comma; -f1 selects first field" },
+  { type: "command", topic: "text-processing", q: "Extract username (first field) from /etc/passwd using colon delimiter.", answer: ["cut -d: -f1 /etc/passwd"], expl: "-d: delimiter is colon; -f1 first field" },
+
+  { type: "mc", topic: "pipes", q: "What does the pipe (|) operator do?", choices: ["Or operation", "Redirect stdout of left command to stdin of right command", "Parallel execution", "Pause"], answer: 1, expl: "Pipe chains commands: cmd1 output → cmd2 input. Powerful for data processing." },
+  { type: "command", topic: "pipes", q: "Find all lines with 'ERROR' and count them using a pipe.", answer: ["grep ERROR log.txt | wc -l"], expl: "grep ERROR passes matching lines to wc -l" },
+  { type: "command", topic: "pipes", q: "Display first 5 lines of file, then count words in those lines.", answer: ["head -5 file.txt | wc -w"], expl: "head output pipes to wc -w" },
+  { type: "command", topic: "pipes", q: "Sort employees by department and find unique departments.", answer: ["cut -d, -f2 employees.txt | sort | uniq"], expl: "cut extracts dept → sort → uniq removes duplicates" },
+
+  { type: "mc", topic: "permissions", q: "What do the three digits in '644' mean for file permissions?", choices: ["Size", "Owner/group/others permissions in octal", "Port numbers", "Permissions type"], answer: 1, expl: "644 = owner rw(6), group r(4), others r(4)" },
+  { type: "command", topic: "permissions", q: "Set file to read/write for owner only, read for group and others.", answer: ["chmod 644 filename"], expl: "644 = rw-r--r--" },
+  { type: "command", topic: "permissions", q: "Set file to read/write for owner only, no access for anyone else.", answer: ["chmod 600 filename"], expl: "600 = rw------- (owner only)" },
+  { type: "command", topic: "permissions", q: "Set directory to owner full access, no access for others.", answer: ["chmod 700 dirname"], expl: "700 = rwx------ (owner only; cannot enter without x)" },
+
+  { type: "output", topic: "text-processing", q: "What does: grep ERROR log.txt | wc -l output?", answer: ["Number of lines containing ERROR"], expl: "Counts ERROR occurrences in log" },
+  { type: "output", topic: "pipes", q: "What does: echo 'hello world' | wc -w output?", answer: ["2"], expl: "Two words: 'hello' and 'world'" },
+  { type: "output", topic: "text-processing", q: "What does: head -1 file.txt | wc -c output?", answer: ["Number of characters in first line"], expl: "First line length in characters" }
+]
